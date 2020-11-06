@@ -1,0 +1,35 @@
+.mainBar {
+  display: flex;
+  width: 60px;
+  height: 100vh;
+  background-color: rgb(39, 41, 45);
+  flex-direction: column;
+  .mainBarItem {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .logo {
+      display: block;
+      width: 36px;
+      height: 36px;
+      text-align: center;
+      line-height: 36px;
+      border-radius: 5px;
+      color: white;
+      font-size: 20px;
+      font-weight: bolder;
+      background-color: blueviolet;
+      cursor: pointer;
+    }
+  }
+  .barList {
+    flex: 1;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    &:hover{
+      overflow-y: auto;
+    }
+  }
+}

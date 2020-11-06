@@ -1,10 +1,16 @@
 import React from 'react';
+import MainBar from '@/components/mainBar/mainBar';
+import Menu from '@/components/menu/menu';
 import styles from './index.less';
 
-export default () => {
+function Index() {
   return (
-    <div>
-      <h1 className={styles.title}>Page index</h1>
+    <div className={styles.body}>
+      <MainBar />
+      <Menu />
+      <div className={styles.title}>Adriot Electron</div>
     </div>
   );
 }
+
+export default Index;
