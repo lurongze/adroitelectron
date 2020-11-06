@@ -1,0 +1,107 @@
+{
+  "name": "lurongze",
+  "private": true,
+  "description": "DVA-ELECTRON",
+  "main": "main.js",
+  "version": "0.16.0",
+  "author": {
+    "name": "lurongze",
+    "email": "1946755280@qq.com"
+  },
+  "scripts": {
+    "start": "umi dev",
+    "build": "umi build",
+    "postinstall": "umi generate tmp",
+    "prettier": "prettier --write '**/*.{js,jsx,tsx,ts,less,md,json}'",
+    "test": "umi-test",
+    "test:coverage": "umi-test --coverage",
+    "package-win": "cross-env NODE_ENV=production yarn build && electron-builder build --win --x64",
+    "dev:electron": "concurrently \"yarn env-to-electron\" \"yarn start\" \"yarn electron-start\"",
+    "dev": "concurrently \"yarn env-to-h5\" \"yarn start\"",
+    "env-to-electron": "cross-env RUN_ENV=electron",
+    "env-to-h5": "cross-env RUN_ENV=h5",
+    "electron-start": "cross-env NODE_ENV=development electron .",
+    "lint": "eslint --ext .js src mock tests",
+    "precommit": "lint-staged"
+  },
+  "gitHooks": {
+    "pre-commit": "lint-staged"
+  },
+  "lint-staged": {
+    "*.{js,jsx,less,md,json}": [
+      "prettier --write"
+    ],
+    "*.ts?(x)": [
+      "prettier --parser=typescript --write"
+    ]
+  },
+  "dependencies": {
+    "@ant-design/pro-layout": "^5.0.12",
+    "@umijs/preset-react": "1.x",
+    "@umijs/test": "^3.2.25",
+    "lint-staged": "^10.0.7",
+    "prettier": "^1.19.1",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "umi": "^3.2.25",
+    "electron": "^10.1.2",
+    "yorkie": "^2.0.0"
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.1.0",
+    "concurrently": "^5.3.0",
+    "cross-env": "^7.0.2",
+    "electron-builder": "^22.8.1",
+    "eslint": "^7.10.0",
+    "eslint-config-umi": "^1.6.0",
+    "eslint-plugin-flowtype": "^5.2.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jsx-a11y": "^6.3.1",
+    "eslint-plugin-react": "^7.21.2",
+    "husky": "^4.3.0"
+  },
+  "build": {
+    "productName": "DvaJSElectron",
+    "appId": "org.lurongze.DvaJSElectron",
+    "files": [
+      "dist/",
+      "main.js"
+    ],
+    "dmg": {
+      "contents": [{
+          "x": 130,
+          "y": 220
+        },
+        {
+          "x": 410,
+          "y": 220,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    },
+    "win": {
+      "target": [
+        "nsis",
+        "msi"
+      ]
+    },
+    "linux": {
+      "target": [
+        "deb",
+        "rpm",
+        "snap",
+        "AppImage"
+      ],
+      "category": "Development"
+    },
+    "directories": {
+      "buildResources": "resources",
+      "output": "release"
+    }
+  },
+
+  "engines": {
+    "node": ">=8.0.0"
+  }
+}
