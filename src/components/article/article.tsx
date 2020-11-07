@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import styles from './menu.less';
+import { Input } from 'antd';
+import styles from './index.less';
 
 interface listType {
   title: string;
@@ -8,7 +9,7 @@ interface propsType {
   themeId: string;
 }
 
-function Menu(props: propsType) {
+function Article(props: propsType) {
   const { themeId = '' } = props;
   const [list, setList] = useState<listType[]>([
     { title: 'JS基础' },
@@ -44,4 +45,4 @@ function Menu(props: propsType) {
   );
 }
 
-export default Menu;
+export default Article;
