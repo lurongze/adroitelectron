@@ -1,4 +1,9 @@
-const list = [
+interface listType {
+  title: string;
+  key: string;
+}
+
+const list: listType[] = [
   { title: 'Html', key: 'html' },
   { title: 'Css', key: 'css' },
   { title: 'JavaScript', key: 'JavaScript' },
@@ -8,7 +13,7 @@ const list = [
   { title: '网络&安全', key: 'NetworkSecurity' },
   { title: '算法', key: 'algorithm' },
   { title: '编程', key: 'programming' },
-  { title: '其他', key: 'other' }
+  { title: '其他', key: 'other' },
 ];
 
-export default list;
+export { list, listType };

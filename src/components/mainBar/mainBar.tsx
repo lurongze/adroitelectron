@@ -1,31 +1,44 @@
 import React, { useState } from 'react';
-import list from '@/data/nav';
+import { Tooltip } from 'antd';
+import { isFuncAndRun } from '@/utils/helper';
+import AddArticle from '@/components/article/add';
+import { list, listType } from '@/data/nav';
 import styles from './mainBar.less';
 
-interface listType {
-  title: string;
+interface propsType {
+  onClickItem: Function;
 }
 
-function MainBar() {
-//   const [list, setList] = useState<listType[]>([
-//     { title: 'JS基础' },
-//     { title: '网络' },
-//     { title: '算法' },
-//   ]);
+function MainBar(props) {
+  const { onClickItem } = props;
+
+  function handleClickItem(key: string) {
+    isFuncAndRun(onClickItem, key);
+  }
+
   return (
     <div className={styles.mainBar}>
       <div className={styles.mainBarItem}>
         <div className={styles.logo}>泽</div>
       </div>
       <div className={styles.barList}>
-        {list.map(s => (
-          <div key={s.title} title={s.title} className={styles.mainBarItem}>
-            <div className={styles.logo}>{s.title.substr(0,1)}</div>
+        {list.map((s: listType) => (
+          <div key={s.key} className={styles.mainBarItem}>
+            <Tooltip title={s.title} placement="right">
+              <div
+                onClick={() => handleClickItem(s.key)}
+                className={styles.logo}
+              >
+                {s.title.substr(0, 1)}
+              </div>
+            </Tooltip>
           </div>
         ))}
       </div>
       <div className={styles.mainBarItem}>
-        <div className={styles.logo}>设</div>
+        <AddArticle>
+          <div className={styles.logo}>设</div>
+        </AddArticle>
       </div>
     </div>
   );
