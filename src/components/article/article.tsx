@@ -1,43 +1,47 @@
 import React, { useEffect, useState } from 'react';
 import { Input } from 'antd';
+import { getArticles } from '@/utils/tcb';
 import styles from './index.less';
 
 interface listType {
   title: string;
+  _id: string;
+  moduleKey: string;
 }
 interface propsType {
-  themeId: string;
+  moduleKey: string;
 }
 
 function Article(props: propsType) {
-  const { themeId = '' } = props;
-  const [list, setList] = useState<listType[]>([
-    { title: 'JS基础' },
-    { title: '网络' },
-    { title: '算法' },
-  ]);
-  const [selected, setSelected] = useState<number>(-1);
+  const { moduleKey = '' } = props;
+  const [list, setList] = useState<listType[]>([]);
+  const [selected, setSelected] = useState<string>('');
 
-  function getMenuList() {
-    console.log('getMenuList');
+  function getArticleList(key: string) {
+    getArticles(key).then((res: Object) => {
+      console.log('getArticleList', res);
+      setList(res?.data || []);
+    });
   }
 
   useEffect(() => {
-    getMenuList();
-  }, [themeId]);
+    if (moduleKey) {
+      getArticleList(moduleKey);
+    }
+  }, [moduleKey]);
 
   return (
     <div className={styles.menuBlock}>
       <div className={styles.menuList}>
-        {Array.from(new Array(100).keys()).map((s: number) => (
+        {list.map((s: listType) => (
           <div
-            onClick={() => setSelected(s)}
+            onClick={() => setSelected(s._id)}
             className={`${styles.menuItem} ${
-              s === selected ? styles.selected : ''
+              s._id === selected ? styles.selected : ''
             }`}
-            key={s}
+            key={s._id}
           >
-            文件传输助手
+            {s.title}
           </div>
         ))}
       </div>

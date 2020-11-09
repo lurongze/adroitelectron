@@ -36,6 +36,7 @@
     ]
   },
   "dependencies": {
+    "@ant-design/icons": "^4.2.2",
     "@ant-design/pro-layout": "^5.0.12",
     "@cloudbase/js-sdk": "^1.3.3",
     "@umijs/preset-react": "1.x",

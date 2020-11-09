@@ -9,7 +9,7 @@ interface propsType {
   onClickItem: Function;
 }
 
-function MainBar(props) {
+function MainBar(props: propsType) {
   const { onClickItem } = props;
 
   function handleClickItem(key: string) {
