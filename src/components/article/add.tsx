@@ -23,7 +23,10 @@ function AddArticle(props: propsType) {
         visible={visible}
         onCancel={() => setVisible(false)}
       >
-        <Editor onSuccess={()=>setVisible(false)} onCancel={()=>setVisible(false)} />
+        <Editor
+          onSuccess={() => setVisible(false)}
+          onCancel={() => setVisible(false)}
+        />
       </Modal>
     </>
   );
