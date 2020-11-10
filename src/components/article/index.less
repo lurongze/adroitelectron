@@ -1,9 +1,10 @@
-.menuBlock {
+.articleBlock {
   display: flex;
   min-width: 250px;
   height: 100vh;
   background-color: rgb(238, 234, 232);
-  .menuList {
+  align-content: flex-start;
+  .articleList {
     display: flex;
     flex-wrap: wrap;
     height: 100vh;
@@ -13,9 +14,12 @@
     &:hover {
       overflow-y: auto;
     }
-    .menuItem {
+    .articleItem {
       width: 250px;
-      height: 65px;
+      // height: 65px;
+      display: flex;
+      box-sizing: border-box;
+      padding: 15px 5px;
       &:hover,
       &.selected {
         background-color: rgb(202, 199, 198);

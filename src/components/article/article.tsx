@@ -6,44 +6,34 @@ import styles from './index.less';
 interface listType {
   title: string;
   _id: string;
-  moduleKey: string;
+  articleId: string;
 }
 interface propsType {
-  moduleKey: string;
+  articleId: string;
 }
 
 function Article(props: propsType) {
-  const { moduleKey = '' } = props;
+  const { articleId = '' } = props;
   const [list, setList] = useState<listType[]>([]);
   const [selected, setSelected] = useState<string>('');
 
   function getArticleList(key: string) {
-    getArticles(key).then((res: Object) => {
+    getArticles(key).then((res: any) => {
       console.log('getArticleList', res);
       setList(res?.data || []);
     });
   }
 
   useEffect(() => {
-    if (moduleKey) {
-      getArticleList(moduleKey);
+    if (articleId) {
+      getArticleList(articleId);
     }
-  }, [moduleKey]);
+  }, [articleId]);
 
   return (
-    <div className={styles.menuBlock}>
-      <div className={styles.menuList}>
-        {list.map((s: listType) => (
-          <div
-            onClick={() => setSelected(s._id)}
-            className={`${styles.menuItem} ${
-              s._id === selected ? styles.selected : ''
-            }`}
-            key={s._id}
-          >
-            {s.title}
-          </div>
-        ))}
+    <div className={styles.articleContent}>
+      <div className={styles.articleTitle}>
+        标题
       </div>
     </div>
   );
