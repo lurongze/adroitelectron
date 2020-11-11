@@ -1,30 +1,46 @@
 import React, { cloneElement, ReactElement, useEffect, useState } from 'react';
 import { Input, Modal, message } from 'antd';
+import { isFuncAndRun } from '@/utils/helper';
 import Editor from './editor';
 
 interface propsType {
   children: ReactElement;
+  onSuccess?: Function;
+  edit?: Boolean;
+  articleId?: string;
 }
 
 function AddArticle(props: propsType) {
-  const { children } = props;
+  const { children,onSuccess, edit = false, articleId='' } = props;
   const [visible, setVisible] = useState(false);
 
   return (
     <>
-      {cloneElement(children, {
-        onClick: () => {
-          setVisible(true);
-        },
-      })}
+      {edit
+        ? cloneElement(children, {
+          onDoubleClick: () => {
+              setVisible(true);
+            },
+          })
+        : cloneElement(children, {
+            onClick: () => {
+              setVisible(true);
+            },
+          })}
       <Modal
         closable={false}
         footer={null}
         visible={visible}
+        destroyOnClose
         onCancel={() => setVisible(false)}
+        width='80vw'
       >
         <Editor
-          onSuccess={() => setVisible(false)}
+          articleId={articleId}
+          onSuccess={() => {
+            setVisible(false);
+            isFuncAndRun(onSuccess);
+          }}
           onCancel={() => setVisible(false)}
         />
       </Modal>

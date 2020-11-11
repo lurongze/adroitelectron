@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Input } from 'antd';
+import { isFuncAndRun } from '@/utils/helper';
 import { getArticles } from '@/utils/tcb';
+import AddArticle from './add';
 import styles from './index.less';
 
 interface listType {
@@ -10,21 +12,22 @@ interface listType {
 }
 interface propsType {
   moduleKey: string;
+  onClickArticle?: Function;
 }
 
 function Articles(props: propsType) {
-  const { moduleKey = '' } = props;
+  const { moduleKey = '', onClickArticle } = props;
   const [list, setList] = useState<listType[]>([]);
   const [selected, setSelected] = useState<string>('');
 
   function getArticleList(key: string) {
-    getArticles(key).then((res: Object) => {
-      console.log('getArticleList', res);
+    getArticles(key).then((res: any) => {
       setList(res?.data || []);
     });
   }
 
   useEffect(() => {
+    console.log('moduleKey', moduleKey);
     if (moduleKey) {
       getArticleList(moduleKey);
     }
@@ -33,16 +36,25 @@ function Articles(props: propsType) {
   return (
     <div className={styles.articleBlock}>
       <div className={styles.articleList}>
-        {list.map((s: listType) => (
-          <div
-            onClick={() => setSelected(s._id)}
-            className={`${styles.articleItem} ${
-              s._id === selected ? styles.selected : ''
-            }`}
+        {list.map((s: listType, i) => (
+          <AddArticle
+            onSuccess={() => getArticleList(moduleKey)}
+            edit
+            articleId={s._id}
             key={s._id}
           >
-            {s.title}
-          </div>
+            <div
+              onClick={() => {
+                setSelected(s._id);
+                isFuncAndRun(onClickArticle, s._id);
+              }}
+              className={`${styles.articleItem} ${
+                s._id === selected ? styles.selected : ''
+              }`}
+            >
+              {i+1}.{s.title}
+            </div>
+          </AddArticle>
         ))}
       </div>
     </div>

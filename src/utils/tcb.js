@@ -27,10 +27,10 @@ export function addArticle(values) {
   return db.collection('article').add(values);
 }
 
-export function updateArticle(values) {
+export function updateArticle(id, values) {
   return db
     .collection('article')
-    .doc(values._id)
+    .doc(id)
     .update(values);
 }
 
@@ -39,5 +39,12 @@ export function getArticles(moduleKey) {
     .collection('article')
     .where({ moduleKey })
     .limit(10000)
+    .get();
+}
+
+export function getArticle(id) {
+  return db
+    .collection('article')
+    .doc(id)
     .get();
 }

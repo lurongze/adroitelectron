@@ -11,8 +11,8 @@ import {
   Select,
 } from 'antd';
 import { list, listType } from '@/data/nav';
-import { isFuncAndRun } from '@/utils/helper';
-import { addArticle } from '@/utils/tcb';
+import { isFuncAndRun, isEmpty } from '@/utils/helper';
+import { addArticle, updateArticle, getArticle } from '@/utils/tcb';
 
 interface formType {
   name: string;
@@ -21,6 +21,7 @@ interface propsType {
   children?: ReactElement;
   onSuccess?: Function;
   onCancel?: Function;
+  articleId?: string;
 }
 
 const LAYOUT_FORM_LAYOUT = {
@@ -32,18 +33,41 @@ const LAYOUT_FORM_LAYOUT = {
 };
 
 function Editor(props: propsType) {
-  const { onSuccess, onCancel } = props;
+  const { onSuccess, onCancel, articleId = '' } = props;
   const [form] = Form.useForm();
 
   function onFinish(values: formType) {
-    addArticle(values).then((res: Object) => {
-      console.log('res', res);
-      if (res?.id) {
-        message.success('保存成功！');
-        isFuncAndRun(onSuccess);
+    if (!isEmpty(articleId)) {
+      updateArticle(articleId, values).then((res: any) => {
+        if (res?.updated) {
+          message.success('保存成功！');
+          isFuncAndRun(onSuccess);
+        }
+      });
+    } else {
+      addArticle(values).then((res: any) => {
+        if (res?.id) {
+          message.success('保存成功！');
+          isFuncAndRun(onSuccess);
+        }
+      });
+    }
+  }
+
+  function getArticleData(id: string) {
+    getArticle(id).then((res: any) => {
+      if (res?.data && res.data.length !== 0) {
+        const record = res.data[0];
+        form.setFieldsValue(record);
       }
     });
   }
+
+  useEffect(() => {
+    if (!isEmpty(articleId)) {
+      getArticleData(articleId);
+    }
+  }, [articleId]);
 
   return (
     <>
@@ -65,11 +89,27 @@ function Editor(props: propsType) {
         <Form.Item name="title" label="标题" required {...LAYOUT_FORM_LAYOUT}>
           <Input />
         </Form.Item>
+        <Form.Item name="content" label="内容" required {...LAYOUT_FORM_LAYOUT}>
+          <Input.TextArea style={{height: 300}} />
+        </Form.Item>
         <Form.Item {...LAYOUT_FORM_LAYOUT}>
-          <Button type="primary" onClick={() => form.submit()}>
-            保存
-          </Button>
-          <Button onClick={() => isFuncAndRun(onCancel)}>取消</Button>
+          <div
+            style={{ display: 'flex', width: '100%', justifyContent: 'center' }}
+          >
+            <Button
+              style={{ margin: '0 10px' }}
+              type="primary"
+              onClick={() => form.submit()}
+            >
+              保存
+            </Button>
+            <Button
+              style={{ margin: '0 10px' }}
+              onClick={() => isFuncAndRun(onCancel)}
+            >
+              取消
+            </Button>
+          </div>
         </Form.Item>
       </Form>
     </>

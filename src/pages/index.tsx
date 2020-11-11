@@ -1,21 +1,22 @@
 import React, { useState } from 'react';
 import MainBar from '@/components/mainBar/mainBar';
-import Articles from @/components/article/articleses';
-import { getTreeList } from '@/utils/helper';
+import Articles from '@/components/article/articles';
+import Article from '@/components/article/article';
 import styles from './index.less';
-import { Link } from 'umi';
 
 function Index() {
-  const [moduleKey, setModuleKey] = useState('');
+  const [moduleKey, setModuleKey] = useState('html');
+  const [articleId, setArticleId] = useState('');
   return (
     <div className={styles.body}>
-      <MainBar onClickItem={(e:string) => setModuleKey(e)} />
-      <Article moduleKey={moduleKey} />
-      <div className={styles.content}>
-        <div className=>标题</div>
-        <div>内容</div>
-        <div>编辑器</div>
-      </div>
+      <MainBar onClickItem={(e: string) => setModuleKey(e)} />
+      <Articles
+        moduleKey={moduleKey}
+        onClickArticle={(e: string) => {
+          setArticleId(e);
+        }}
+      />
+      <Article articleId={articleId} />
     </div>
   );
 }

@@ -3,9 +3,9 @@
   min-width: 250px;
   height: 100vh;
   background-color: rgb(238, 234, 232);
-  align-content: flex-start;
   .articleList {
     display: flex;
+    align-content: flex-start;
     flex-wrap: wrap;
     height: 100vh;
     width: 250px;
@@ -17,13 +17,60 @@
     .articleItem {
       width: 250px;
       // height: 65px;
+      cursor: pointer;
       display: flex;
       box-sizing: border-box;
       padding: 15px 5px;
+      color: black;
       &:hover,
       &.selected {
         background-color: rgb(202, 199, 198);
       }
     }
+  }
+}
+.articleContent {
+  flex: 1;
+  box-sizing: border-box;
+  padding: 10px;
+  height: 100vh;
+  overflow-x: auto;
+  overflow-y: auto;
+  position: relative;
+  .toolHeader {
+    position: absolute;
+    display: flex;
+    width: 100%;
+    top: 0;
+    right: 0;
+    z-index: 10;
+    background-color: white;
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.025);
+    padding: 15px;
+
+    &.show {
+      animation: slideShow .5s ease-in-out forwards;
+    }
+    &.hide {
+      animation: slideHide 1s ease-in-out forwards;
+    }
+  }
+}
+
+@keyframes slideHide {
+  from {
+    top: 0;
+  }
+  to {
+    top: -105%;
+  }
+}
+
+@keyframes slideShow {
+  from {
+    top: -105%;
+  }
+  to {
+    top: 0;
   }
 }
