@@ -1,0 +1,29 @@
+directories:
+  output: release
+  buildResources: resources
+productName: DvaJSElectron
+appId: org.lurongze.DvaJSElectron
+files:
+  - filter:
+      - dist/
+      - main.js
+dmg:
+  contents:
+    - x: 130
+      'y': 220
+    - x: 410
+      'y': 220
+      type: link
+      path: /Applications
+win:
+  target:
+    - nsis
+    - msi
+linux:
+  target:
+    - deb
+    - rpm
+    - snap
+    - AppImage
+  category: Development
+electronVersion: 10.1.5

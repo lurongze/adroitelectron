@@ -19,15 +19,18 @@ function Articles(props: propsType) {
   const { moduleKey = '', onClickArticle } = props;
   const [list, setList] = useState<listType[]>([]);
   const [selected, setSelected] = useState<string>('');
+  const [loading,setLoading] = useState<Boolean>(false);
 
   function getArticleList(key: string) {
-    getArticles(key).then((res: any) => {
-      setList(res?.data || []);
-    });
+    if(!loading){
+      setLoading(true);
+      getArticles(key).then((res: any) => {
+        setList(res?.data || []);
+      }).finally(()=>setLoading(false));
+    }
   }
 
   useEffect(() => {
-    console.log('moduleKey', moduleKey);
     if (moduleKey) {
       getArticleList(moduleKey);
     }

@@ -5,16 +5,18 @@ import gfm from 'remark-gfm';
 import { isEmpty } from '@/utils/helper';
 import { getArticle } from '@/utils/tcb';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { dark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { light } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import 'github-markdown-css/github-markdown.css';
+import styles from './index.less';
+import { PageLoading } from '@ant-design/pro-layout';
 
 const renderers = {
   code: ({ language, value }) => {
     return (
-      <SyntaxHighlighter style={dark} language={language} children={value} />
+      <SyntaxHighlighter style={light} language={language} children={value} />
     );
   },
 };
-import styles from './index.less';
 
 interface listType {
   title: string;
@@ -28,16 +30,20 @@ interface propsType {
 function Article(props: propsType) {
   const { articleId = '' } = props;
   const [content, setContent] = useState('');
-  const [visible, setVisible] = useState(false);
-  const [codeEdit, setCodeEdit] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   function getArticleData(id: string) {
-    getArticle(id).then((res: any) => {
-      if (res?.data && res.data.length !== 0) {
-        const record = res.data[0];
-        setContent(record.content);
-      }
-    });
+    if (!loading) {
+      setLoading(true);
+      getArticle(id)
+        .then((res: any) => {
+          if (res?.data && res.data.length !== 0) {
+            const record = res.data[0];
+            setContent(record.content);
+          }
+        })
+        .finally(() => setLoading(false));
+    }
   }
 
   useEffect(() => {
@@ -47,45 +53,17 @@ function Article(props: propsType) {
   }, [articleId]);
 
   return (
-    <div
-      className={styles.articleContent}
-      onDoubleClick={() => setVisible(true)}
-      onClick={() => {
-        if (visible) {
-          setVisible(false);
-        }
-      }}
-    >
-      <div
-        className={`${styles.toolHeader} ${
-          visible ? styles.show : styles.hide
-        }`}
-      >
-        <Button onClick={() => setCodeEdit(true)}>修改</Button>
-        <Button>保存</Button>
-        <Button
-          onClick={() => {
-            setVisible(false);
-            setCodeEdit(false);
-          }}
-        >
-          取消
-        </Button>
-      </div>
-      {isEmpty(content) && (
+    <div className={styles.articleContent}>
+      {isEmpty(content) && !loading && (
         <Empty description="暂无数据" style={{ marginTop: '30%' }} />
       )}
-      {!isEmpty(content) && !codeEdit && (
+      {loading && <PageLoading />}
+      {!isEmpty(content) && (
         <ReactMarkdown
+          className="markdown-body"
           renderers={renderers}
           plugins={[gfm]}
           children={content}
-        />
-      )}
-      {!isEmpty(content) && codeEdit && (
-        <Input.TextArea
-          style={{ width: '100%', height: '100%' }}
-          defaultValue={content}
         />
       )}
     </div>

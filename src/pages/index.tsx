@@ -1,22 +1,64 @@
 import React, { useState } from 'react';
-import MainBar from '@/components/mainBar/mainBar';
-import Articles from '@/components/article/articles';
-import Article from '@/components/article/article';
-import styles from './index.less';
+import { Menu, message } from 'antd';
+import { getArticle } from '@/utils/tcb';
+
+const { SubMenu } = Menu;
 
 function Index() {
   const [moduleKey, setModuleKey] = useState('html');
   const [articleId, setArticleId] = useState('');
   return (
-    <div className={styles.body}>
-      <MainBar onClickItem={(e: string) => setModuleKey(e)} />
-      <Articles
-        moduleKey={moduleKey}
-        onClickArticle={(e: string) => {
-          setArticleId(e);
-        }}
-      />
-      <Article articleId={articleId} />
+    <div style={{ display: 'flex' }}>
+      <Menu
+        mode="inline"
+        theme="dark"
+        inlineCollapsed={false}
+        style={{ width: '60px', height: '100vh' }}
+      >
+        <Menu.Item key="1">Option 1</Menu.Item>
+        <Menu.Item key="2">Option 2</Menu.Item>
+        <Menu.Item key="3">Option 3</Menu.Item>
+      </Menu>
+      <Menu
+        style={{ width: '256px', height: '100vh' }}
+        mode="inline"
+        theme="light"
+      >
+        <Menu.Item key="1" onDoubleClick={() => message.success('成功！')}>
+          Navigation One
+        </Menu.Item>
+        <Menu.Item key="2">Navigation Two</Menu.Item>
+        <SubMenu
+          key="sub1"
+          title={
+            <span onDoubleClick={() => message.success('弹层！')}>
+              Navigation Two
+            </span>
+          }
+        >
+          <Menu.Item key="3">Option 3</Menu.Item>
+          <Menu.Item key="4">Option 4</Menu.Item>
+          <SubMenu key="sub1-2" title="Submenu">
+            <Menu.Item key="5">Option 5</Menu.Item>
+            <Menu.Item key="6">Option 6</Menu.Item>
+          </SubMenu>
+        </SubMenu>
+        <SubMenu key="sub2" title="Navigation Three">
+          <Menu.Item key="7">Option 7</Menu.Item>
+          <Menu.Item key="8">Option 8</Menu.Item>
+          <Menu.Item key="9">Option 9</Menu.Item>
+          <Menu.Item key="10">Option 10</Menu.Item>
+        </SubMenu>
+        <Menu.Item key="link">
+          <a
+            href="https://ant.design"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Ant Design
+          </a>
+        </Menu.Item>
+      </Menu>
     </div>
   );
 }

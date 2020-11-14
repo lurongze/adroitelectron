@@ -43,6 +43,7 @@
     "@umijs/test": "^3.2.25",
     "antd": "^4.8.0",
     "axios": "^0.21.0",
+    "github-markdown-css": "^4.0.0",
     "lint-staged": "^10.0.7",
     "prettier": "^1.19.1",
     "react": "^16.12.0",
