@@ -5,12 +5,11 @@ const app = cloudbase.init({
 });
 const auth = app.auth();
 const db = app.database();
-
 async function login() {
   await auth.anonymousAuthProvider().signIn();
   // 匿名登录成功检测登录状态isAnonymous字段为true
   const loginState = await auth.getLoginState();
-  console.log(loginState.isAnonymousAuth); // true
+  console.log('loginState.isAnonymousAuth', loginState.isAnonymousAuth); // true
 }
 
 login();
@@ -46,5 +45,36 @@ export function getArticle(id) {
   return db
     .collection('article')
     .doc(id)
+    .get();
+}
+
+export function addNote(values) {
+  return db.collection('notes').add(values);
+}
+
+export function updateNote(id, values) {
+  return db
+    .collection('notes')
+    .doc(id)
+    .update(values);
+}
+
+export function getNote(id) {
+  return db
+    .collection('notes')
+    .doc(id)
+    .get();
+}
+export function removeNote(id) {
+  return db
+    .collection('notes')
+    .doc(id)
+    .remove();
+}
+export function getNotes() {
+  return db
+    .collection('notes')
+    .orderBy('sort', 'asc')
+    .limit(100)
     .get();
 }

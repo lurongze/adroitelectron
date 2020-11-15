@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Menu, message } from 'antd';
+import MainBar from '@/components/mainBar/mainBar';
 import { getArticle } from '@/utils/tcb';
 
 const { SubMenu } = Menu;
@@ -7,18 +8,13 @@ const { SubMenu } = Menu;
 function Index() {
   const [moduleKey, setModuleKey] = useState('html');
   const [articleId, setArticleId] = useState('');
+
+  useEffect(() => {
+    console.log('index useEffect');
+  }, []);
   return (
     <div style={{ display: 'flex' }}>
-      <Menu
-        mode="inline"
-        theme="dark"
-        inlineCollapsed={false}
-        style={{ width: '60px', height: '100vh' }}
-      >
-        <Menu.Item key="1">Option 1</Menu.Item>
-        <Menu.Item key="2">Option 2</Menu.Item>
-        <Menu.Item key="3">Option 3</Menu.Item>
-      </Menu>
+      <MainBar />
       <Menu
         style={{ width: '256px', height: '100vh' }}
         mode="inline"
