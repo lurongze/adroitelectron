@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Menu, message } from 'antd';
 import MainBar from '@/components/mainBar/mainBar';
+import cloudFunc from '@/utils/cloudFunc';
 import { getArticle } from '@/utils/tcb';
 
 const { SubMenu } = Menu;
@@ -8,13 +9,18 @@ const { SubMenu } = Menu;
 function Index() {
   const [moduleKey, setModuleKey] = useState('html');
   const [articleId, setArticleId] = useState('');
+  const [initing, setIniting] = useState(true);
 
   useEffect(() => {
-    console.log('index useEffect');
+    // console.log('index useEffect');
+    cloudFunc.signIn(() => setIniting(false));
   }, []);
+  if (initing) {
+    return <div>初始化中...</div>;
+  }
   return (
     <div style={{ display: 'flex' }}>
-      <MainBar />
+      <MainBar onClickItem={()=>{}} />
       <Menu
         style={{ width: '256px', height: '100vh' }}
         mode="inline"

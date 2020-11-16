@@ -42,6 +42,7 @@ function MainBar(props: propsType) {
   }
 
   useEffect(() => {
+    console.log('global/queryNotes');
     dispatch({
       type: 'global/queryNotes',
     });

@@ -1,5 +1,5 @@
 import { Effect, ImmerReducer, Reducer, Subscription } from 'umi';
-import { getNotes } from '@/utils/tcb';
+import cloudFunc from '@/utils/cloudFunc';
 
 export interface IndexModelState {
   notes: Object[];
@@ -21,14 +21,14 @@ export interface IndexModelType {
 const IndexModel: IndexModelType = {
   namespace: 'global',
   state: {
-    notes: [{ name: 'zhuawajiaoyu' }, { name: 'useEffect' }],
+    notes: [],
     articles: [],
     categories: [],
   },
   effects: {
     *query({ payload }, { call, put }) {},
     *queryNotes({ payload }, { call, put }) {
-      const res = yield call(getNotes);
+      const res = yield call(cloudFunc.queryNotes);
       console.log('queryNotes', res);
       yield put({
         type: 'save',
