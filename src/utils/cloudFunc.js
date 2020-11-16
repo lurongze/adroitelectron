@@ -13,10 +13,9 @@ import { isFuncAndRun } from '@/utils/helper';
 // }
 const envId = 'wt-share-43bafa';
 let app = null; // 得放到外面才行
-let db = null; 
+let db = null;
 
 class cloudFunc {
-  
   constructor() {
     // 初始化 CloudBase
     app = cloudbase.init({
@@ -33,10 +32,13 @@ class cloudFunc {
       persistence: 'local',
     });
     if (!auth.hasLoginState()) {
-      auth.anonymousAuthProvider().signIn().then(() => {
-        // this.setButtonStatus(false)
-        isFuncAndRun(callBack);
-      });
+      auth
+        .anonymousAuthProvider()
+        .signIn()
+        .then(() => {
+          // this.setButtonStatus(false)
+          isFuncAndRun(callBack);
+        });
     } else {
       // this.setButtonStatus(false)
       isFuncAndRun(callBack);
@@ -44,12 +46,34 @@ class cloudFunc {
   }
 
   queryNotes() {
-    console.log('cloudFunc', db);
     return db
       .collection('notes')
       .orderBy('sort', 'asc')
       .limit(100)
       .get();
+  }
+
+  saveNote(values) {
+    const { _id = '', edit, _openid, success, ...resValues } = values;
+    let id = _id;
+    if (_id.startsWith('tmp')) {
+      id = '';
+    }
+
+    if (id === '') {
+      return db.collection('notes').add(resValues);
+    }
+    return db
+      .collection('notes')
+      .doc(id)
+      .update(resValues);
+  }
+
+  deleteNote(id) {
+    return db
+      .collection('notes')
+      .doc(id)
+      .remove();
   }
 }
 

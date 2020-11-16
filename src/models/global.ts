@@ -1,10 +1,12 @@
 import { Effect, ImmerReducer, Reducer, Subscription } from 'umi';
 import cloudFunc from '@/utils/cloudFunc';
+import { isFuncAndRun } from '@/utils/helper';
 
 export interface IndexModelState {
   notes: Object[];
   articles: Object[];
   categories: Object[];
+  showNav: boolean;
 }
 export interface IndexModelType {
   namespace: 'global';
@@ -24,12 +26,12 @@ const IndexModel: IndexModelType = {
     notes: [],
     articles: [],
     categories: [],
+    showNav: true,
   },
   effects: {
     *query({ payload }, { call, put }) {},
     *queryNotes({ payload }, { call, put }) {
       const res = yield call(cloudFunc.queryNotes);
-      console.log('queryNotes', res);
       yield put({
         type: 'save',
         payload: {
@@ -37,13 +39,26 @@ const IndexModel: IndexModelType = {
         },
       });
     },
+    *deleteNote({ payload }, { call, put }) {
+      const res = yield call(cloudFunc.deleteNote, payload.id);
+      isFuncAndRun(payload?.success);
+    },
+    *saveNote({ payload }, { call, put }) {
+      const res = yield call(cloudFunc.saveNote, payload);
+      isFuncAndRun(payload?.success);
+    },
   },
   reducers: {
     save(state: any, action: any) {
-      console.log('payload', state, action.payload);
       return {
         ...state,
         ...action.payload,
+      };
+    },
+    toggleNav(state: any) {
+      return {
+        ...state,
+        showNav: !state.showNav,
       };
     },
   },

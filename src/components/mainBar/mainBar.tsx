@@ -16,7 +16,7 @@ import styles from './mainBar.less';
 const { SubMenu } = Menu;
 
 interface propsType {
-  onClickItem: Function;
+  onClickItem?: Function;
   global?: any;
   dispatch?: any;
 }
@@ -58,8 +58,16 @@ function MainBar(props: propsType) {
         inlineCollapsed={true}
         style={{ width: '60px', height: '100vh' }}
       >
-        <Menu.Item key="1" title={null}>
-          <HomeFilled />
+        <Menu.Item
+          key="1"
+          onClick={() => {
+            dispatch({
+              type: 'global/toggleNav',
+            });
+          }}
+          title={null}
+        >
+          <HomeFilled style={{ color: 'goldenrod' }} />
         </Menu.Item>
         <SubMenu
           key="2"
@@ -99,7 +107,6 @@ function MainBar(props: propsType) {
         <Notes
           onSuccess={() => {
             setVisible(false);
-            doGetNotes();
           }}
           onCancel={() => setVisible(false)}
         />

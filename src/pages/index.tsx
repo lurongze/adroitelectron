@@ -1,66 +1,30 @@
 import React, { useEffect, useState } from 'react';
-import { Menu, message } from 'antd';
+import { Menu, message, Empty } from 'antd';
 import MainBar from '@/components/mainBar/mainBar';
+import Categories from '@/components/categories/categories';
+import { connect } from 'umi';
 import cloudFunc from '@/utils/cloudFunc';
-import { getArticle } from '@/utils/tcb';
-
-const { SubMenu } = Menu;
+import styles from './index.less';
 
 function Index() {
-  const [moduleKey, setModuleKey] = useState('html');
-  const [articleId, setArticleId] = useState('');
   const [initing, setIniting] = useState(true);
 
   useEffect(() => {
-    // console.log('index useEffect');
     cloudFunc.signIn(() => setIniting(false));
   }, []);
   if (initing) {
-    return <div>初始化中...</div>;
+    return (
+      <Empty
+        description="页面初始化中..."
+        image={Empty.PRESENTED_IMAGE_SIMPLE}
+      />
+    );
   }
   return (
-    <div style={{ display: 'flex' }}>
-      <MainBar onClickItem={()=>{}} />
-      <Menu
-        style={{ width: '256px', height: '100vh' }}
-        mode="inline"
-        theme="light"
-      >
-        <Menu.Item key="1" onDoubleClick={() => message.success('成功！')}>
-          Navigation One
-        </Menu.Item>
-        <Menu.Item key="2">Navigation Two</Menu.Item>
-        <SubMenu
-          key="sub1"
-          title={
-            <span onDoubleClick={() => message.success('弹层！')}>
-              Navigation Two
-            </span>
-          }
-        >
-          <Menu.Item key="3">Option 3</Menu.Item>
-          <Menu.Item key="4">Option 4</Menu.Item>
-          <SubMenu key="sub1-2" title="Submenu">
-            <Menu.Item key="5">Option 5</Menu.Item>
-            <Menu.Item key="6">Option 6</Menu.Item>
-          </SubMenu>
-        </SubMenu>
-        <SubMenu key="sub2" title="Navigation Three">
-          <Menu.Item key="7">Option 7</Menu.Item>
-          <Menu.Item key="8">Option 8</Menu.Item>
-          <Menu.Item key="9">Option 9</Menu.Item>
-          <Menu.Item key="10">Option 10</Menu.Item>
-        </SubMenu>
-        <Menu.Item key="link">
-          <a
-            href="https://ant.design"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Ant Design
-          </a>
-        </Menu.Item>
-      </Menu>
+    <div className={styles.body}>
+      <MainBar />
+      <Categories />
+      <Categories />
     </div>
   );
 }

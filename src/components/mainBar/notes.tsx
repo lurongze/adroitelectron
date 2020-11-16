@@ -1,4 +1,4 @@
-import React, { cloneElement, ReactElement, useEffect, useState } from 'react';
+import React, { useRef, ReactElement, useEffect, useState } from 'react';
 import {
   Input,
   Menu,
@@ -17,6 +17,7 @@ import { connect } from 'umi';
 import ProTable from '@ant-design/pro-table';
 import { isFuncAndRun, isEmpty } from '@/utils/helper';
 import { PlusOutlined } from '@ant-design/icons';
+import cloudFunc from '@/utils/cloudFunc';
 import styles from './mainBar.less';
 
 interface formType {
@@ -28,55 +29,100 @@ interface propsType {
   onCancel?: Function;
   noteId?: string;
   global?: any;
+  loading?: boolean;
+  dispatch?: any;
 }
-
-const LAYOUT_FORM_LAYOUT = {
-  labelCol: {
-    flex: '0 0 80px',
-    xs: { flex: '0 0 80px' },
-    sm: { flex: '0 0 80px' },
-  },
-};
 
 function Notes(props: propsType) {
   const {
-    onSuccess,
-    onCancel,
-    noteId = '',
+    loading,
+    dispatch,
     global: { notes = [] },
   } = props;
-
+  const inputRef = useRef<any>(null);
+  const inputNumberRef = useRef<any>(null);
   const [list, setList] = useState<Object[]>([]);
-  const [editId, setEditId] = useState('');
-
-  function removeNote(id: string) {}
-
-  function handleChange(e: any, id: string) {
-    const { value } = e.target;
-  }
 
   function clickRow(id: string = '') {
-    const resList = list.map((s: any) => {
+    let resList = list.map((s: any) => {
       if (s._id === id) {
         return { ...s, edit: true };
       }
       return { ...s, edit: false };
     });
+    if (isEmpty(id)) {
+      resList = resList.filter((s: any) => {
+        if (s._id.startsWith('tmp') && isEmpty(s.title)) {
+          return false;
+        }
+        return true;
+      });
+    }
     setList(resList);
+  }
+
+  function addRow() {
+    let resList = list.map((s: any) => ({ ...s, edit: false }));
+    resList = [
+      ...resList,
+      {
+        _id: `tmp${new Date().getTime()}`,
+        title: '',
+        sort: resList[resList.length - 1]?.sort || 50,
+        edit: true,
+      },
+    ];
+    setList(resList);
+  }
+
+  function removeNote(id: string) {
+    dispatch({
+      type: 'global/deleteNote',
+      payload: {
+        id,
+        success: () => {
+          message.success('删除成功！');
+          dispatch({
+            type: 'global/queryNotes',
+          });
+        },
+      },
+    });
+  }
+
+  function saveRow(row: any) {
+    const title = inputRef?.current?.state?.value || '';
+    const sort = inputNumberRef?.current?.state?.value || 50;
+    if (!isEmpty(title)) {
+      dispatch({
+        type: 'global/saveNote',
+        payload: {
+          ...row,
+          title,
+          sort,
+          success: () => {
+            message.success('保存成功！');
+            dispatch({
+              type: 'global/queryNotes',
+            });
+          },
+        },
+      });
+    }
   }
 
   const columns = [
     {
-      title: 'title',
-      dataIndex: '_id',
+      title: '笔记名',
+      key: '_id',
       width: 300,
       render(text: any, row: any) {
         if (row.edit) {
           return (
             <Input
-              value={row.title}
+              defaultValue={row.title}
               autoFocus
-              onChange={(e: any) => handleChange(e, row._id)}
+              ref={inputRef}
               style={{ width: '100%' }}
             />
           );
@@ -85,16 +131,39 @@ function Notes(props: propsType) {
       },
     },
     {
+      title: '排序',
+      key: '_id',
+      width: 100,
+      render(text: any, row: any) {
+        if (row.edit) {
+          return (
+            <InputNumber
+              defaultValue={row.sort}
+              ref={inputNumberRef}
+              style={{ width: '100%' }}
+            />
+          );
+        }
+        return row.sort;
+      },
+    },
+    {
       title: '操作',
-      dataIndex: '_id',
+      key: '_id',
       align: 'right',
+      width: 100,
       render(text: any, row: any) {
         // return <a onClick={() => setEditId(row._id)}>编辑</a>;
         let btns = [
           <a onClick={() => clickRow(row._id)} className={styles.actionItem}>
             编辑
           </a>,
-          <Popconfirm title="确认删除吗?" onConfirm={() => removeNote(row._id)}>
+          <Popconfirm
+            title="确认删除吗?"
+            okText="删除"
+            cancelText="取消"
+            onConfirm={() => removeNote(row._id)}
+          >
             <a className={styles.actionItem} style={{ color: '#ff4d4f' }}>
               删除
             </a>
@@ -105,10 +174,7 @@ function Notes(props: propsType) {
             <a onClick={() => clickRow('')} className={styles.actionItem}>
               取消
             </a>,
-            <a
-              onClick={() => message.success('保存！')}
-              className={styles.actionItem}
-            >
+            <a onClick={() => saveRow(row)} className={styles.actionItem}>
               保存
             </a>,
           ];
@@ -128,15 +194,21 @@ function Notes(props: propsType) {
     <>
       <ProTable
         columns={columns}
+        loading={loading}
         dataSource={list}
         pagination={false}
-        showHeader={false}
+        // showHeader={false}
         search={false}
         toolbar={{
           title: '',
           subTitle: '我的笔记',
           actions: [
-            <Button key="button" icon={<PlusOutlined />} type="primary">
+            <Button
+              onClick={() => addRow()}
+              key="button"
+              icon={<PlusOutlined />}
+              type="primary"
+            >
               新建
             </Button>,
           ],
@@ -150,6 +222,6 @@ function Notes(props: propsType) {
 export default connect(
   ({ global, loading }: { global: any; loading: any }) => ({
     global,
-    loading: loading.models.index,
+    loading: loading.models.global,
   }),
 )(Notes);
