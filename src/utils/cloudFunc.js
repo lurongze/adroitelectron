@@ -75,6 +75,39 @@ class cloudFunc {
       .doc(id)
       .remove();
   }
+
+  queryNotes() {
+    return db
+      .collection('notes')
+      .orderBy('sort', 'asc')
+      .limit(100)
+      .get();
+  }
+
+  saveNote(values) {
+    const { _id = '', edit, _openid, success, ...resValues } = values;
+    let id = _id;
+    if (_id.startsWith('tmp')) {
+      id = '';
+    }
+
+    if (id === '') {
+      return db.collection('notes').add(resValues);
+    }
+    return db
+      .collection('notes')
+      .doc(id)
+      .update(resValues);
+  }
+
+  deleteNote(id) {
+    return db
+      .collection('notes')
+      .doc(id)
+      .remove();
+  }
+
+
 }
 
 export default new cloudFunc();

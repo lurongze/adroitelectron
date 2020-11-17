@@ -1,66 +1,43 @@
-import { Effect, ImmerReducer, Reducer, Subscription } from 'umi';
-import cloudFunc from '@/utils/cloudFunc';
-import { isFuncAndRun } from '@/utils/helper';
+import { Effect, Reducer } from 'umi';
 
-export interface IndexModelState {
-  notes: Object[];
-  articles: Object[];
-  categories: Object[];
+export interface GlobalModelState {
   showNav: boolean;
+  currentNote: string;
 }
-export interface IndexModelType {
+export interface GlobalModelType {
   namespace: 'global';
-  state: IndexModelState;
+  state: GlobalModelState;
   effects: {
     query: Effect;
   };
   reducers: {
-    save: Reducer<IndexModelState>;
+    save: Reducer<GlobalModelState>;
     // 启用 immer 之后
     // save: ImmerReducer<IndexModelState>;
   };
 }
-const IndexModel: IndexModelType = {
+const GlobalModel: GlobalModelType = {
   namespace: 'global',
   state: {
-    notes: [],
-    articles: [],
-    categories: [],
     showNav: true,
+    currentNote: {},
   },
   effects: {
     *query({ payload }, { call, put }) {},
-    *queryNotes({ payload }, { call, put }) {
-      const res = yield call(cloudFunc.queryNotes);
-      yield put({
-        type: 'save',
-        payload: {
-          notes: res?.data || [],
-        },
-      });
-    },
-    *deleteNote({ payload }, { call, put }) {
-      const res = yield call(cloudFunc.deleteNote, payload.id);
-      isFuncAndRun(payload?.success);
-    },
-    *saveNote({ payload }, { call, put }) {
-      const res = yield call(cloudFunc.saveNote, payload);
-      isFuncAndRun(payload?.success);
-    },
   },
   reducers: {
-    save(state: any, action: any) {
-      return {
-        ...state,
-        ...action.payload,
-      };
-    },
     toggleNav(state: any) {
       return {
         ...state,
         showNav: !state.showNav,
       };
     },
+    selectNote(state: any, action: any) {
+      return {
+        ...state,
+        currentNote: action.payload,
+      };
+    },
   },
 };
-export default IndexModel;
+export default GlobalModel;

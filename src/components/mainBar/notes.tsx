@@ -28,7 +28,7 @@ interface propsType {
   onSuccess?: Function;
   onCancel?: Function;
   noteId?: string;
-  global?: any;
+  noteModel?: any;
   loading?: boolean;
   dispatch?: any;
 }
@@ -37,7 +37,7 @@ function Notes(props: propsType) {
   const {
     loading,
     dispatch,
-    global: { notes = [] },
+    noteModel: { notes = [] },
   } = props;
   const inputRef = useRef<any>(null);
   const inputNumberRef = useRef<any>(null);
@@ -77,13 +77,13 @@ function Notes(props: propsType) {
 
   function removeNote(id: string) {
     dispatch({
-      type: 'global/deleteNote',
+      type: 'noteModel/deleteNote',
       payload: {
         id,
         success: () => {
           message.success('删除成功！');
           dispatch({
-            type: 'global/queryNotes',
+            type: 'noteModel/queryNotes',
           });
         },
       },
@@ -95,7 +95,7 @@ function Notes(props: propsType) {
     const sort = inputNumberRef?.current?.state?.value || 50;
     if (!isEmpty(title)) {
       dispatch({
-        type: 'global/saveNote',
+        type: 'noteModel/saveNote',
         payload: {
           ...row,
           title,
@@ -103,7 +103,7 @@ function Notes(props: propsType) {
           success: () => {
             message.success('保存成功！');
             dispatch({
-              type: 'global/queryNotes',
+              type: 'noteModel/queryNotes',
             });
           },
         },
@@ -115,7 +115,7 @@ function Notes(props: propsType) {
     {
       title: '笔记名',
       key: '_id',
-      width: 300,
+      width: 400,
       render(text: any, row: any) {
         if (row.edit) {
           return (
@@ -150,10 +150,9 @@ function Notes(props: propsType) {
     {
       title: '操作',
       key: '_id',
-      align: 'right',
-      width: 100,
+      align: 'center',
+      width: 150,
       render(text: any, row: any) {
-        // return <a onClick={() => setEditId(row._id)}>编辑</a>;
         let btns = [
           <a onClick={() => clickRow(row._id)} className={styles.actionItem}>
             编辑
@@ -220,8 +219,8 @@ function Notes(props: propsType) {
 }
 
 export default connect(
-  ({ global, loading }: { global: any; loading: any }) => ({
-    global,
-    loading: loading.models.global,
+  ({ noteModel, loading }: { noteModel: any; loading: any }) => ({
+    noteModel,
+    loading: loading.models.noteModel,
   }),
 )(Notes);

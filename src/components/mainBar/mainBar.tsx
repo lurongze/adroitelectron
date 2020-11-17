@@ -7,7 +7,6 @@ import {
   HomeFilled,
   BookFilled,
   FolderAddFilled,
-  EditFilled,
 } from '@ant-design/icons';
 import { getNotes } from '@/utils/tcb';
 import Notes from './notes';
@@ -18,6 +17,7 @@ const { SubMenu } = Menu;
 interface propsType {
   onClickItem?: Function;
   global?: any;
+  noteModel?: any;
   dispatch?: any;
 }
 interface listType {
@@ -27,24 +27,16 @@ interface listType {
 
 function MainBar(props: propsType) {
   const {
-    onClickItem,
     dispatch,
-    global: { notes = [] },
+    noteModel: { notes = [] },
+    global: { currentNote = '' },
   } = props;
   const [openKeys, setOpenKeys] = useState<string[]>([]);
   const [visible, setVisible] = useState<boolean>(false);
-  const [noteId, setNoteId] = useState<string>('');
-  const [list, setList] = useState<listType[]>([]);
-  const [selectedNote, setSelectedNote] = useState<string>('');
-
-  function handleClickItem(key: string) {
-    isFuncAndRun(onClickItem, key);
-  }
 
   useEffect(() => {
-    console.log('global/queryNotes');
     dispatch({
-      type: 'global/queryNotes',
+      type: 'noteModel/queryNotes',
     });
   }, []);
 
@@ -53,7 +45,7 @@ function MainBar(props: propsType) {
       <Menu
         mode="inline"
         theme="dark"
-        selectedKeys={[selectedNote]}
+        selectedKeys={[currentNote?._id || '']}
         openKeys={openKeys}
         inlineCollapsed={true}
         style={{ width: '60px', height: '100vh' }}
@@ -61,6 +53,7 @@ function MainBar(props: propsType) {
         <Menu.Item
           key="1"
           onClick={() => {
+            setOpenKeys([]);
             dispatch({
               type: 'global/toggleNav',
             });
@@ -81,7 +74,17 @@ function MainBar(props: propsType) {
           }}
         >
           {notes.map((s: listType) => (
-            <Menu.Item key={s._id} onClick={() => setSelectedNote(s._id)}>
+            <Menu.Item
+              key={s._id}
+              onClick={() => {
+                setOpenKeys([]);
+                localStorage.setItem('selectedNote', JSON.stringify(s));
+                dispatch({
+                  type: 'global/selectNote',
+                  payload: s,
+                });
+              }}
+            >
               {s.title}
             </Menu.Item>
           ))}
@@ -116,8 +119,17 @@ function MainBar(props: propsType) {
 }
 
 export default connect(
-  ({ global, loading }: { global: any; loading: any }) => ({
+  ({
     global,
-    loading: loading.models.index,
+    noteModel,
+    loading,
+  }: {
+    global: any;
+    noteModel: any;
+    loading: any;
+  }) => ({
+    global,
+    noteModel,
+    loading: loading.models.noteModel,
   }),
 )(MainBar);

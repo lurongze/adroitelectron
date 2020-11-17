@@ -1,24 +1,32 @@
 import React, { useEffect, useState } from 'react';
-import { Menu, message } from 'antd';
+import { Menu, message, Tooltip } from 'antd';
 import { connect } from 'umi';
 import styles from './index.less';
+import { SettingFilled } from '@ant-design/icons';
 
 const { SubMenu } = Menu;
 
 function Categories(props: any) {
   const {
-    global: { showNav },
+    global: { showNav, currentNote },
+    categoriesModel: { categories = [] },
   } = props;
   return (
     <div className={`${styles.categories} ${!showNav ? styles.hide : ''}`}>
-      <Menu
-        style={{ width: '256px', height: '100vh' }}
-        mode="inline"
-        theme="light"
-      >
-        <Menu.Item key="1" onDoubleClick={() => message.success('成功！')}>
-          Navigation One
-        </Menu.Item>
+      <div className={styles.noteHead}>
+        <div className={styles.noteTitle}>
+          <Tooltip  title={currentNote?.title || ''} placement='right'>
+            {currentNote?.title || ''}
+          </Tooltip>
+        </div>
+        <div className={styles.setting}>
+          <SettingFilled />
+        </div>
+      </div>
+      <Menu className={styles.menuComponent} mode="inline" theme="light">
+        {categories.map((s: any) => (
+          <Menu.Item key={s.title}>N{s.title}</Menu.Item>
+        ))}
         <Menu.Item key="2">Navigation Two</Menu.Item>
         <SubMenu
           key="sub1"
@@ -41,23 +49,23 @@ function Categories(props: any) {
           <Menu.Item key="9">Option 9</Menu.Item>
           <Menu.Item key="10">Option 10</Menu.Item>
         </SubMenu>
-        <Menu.Item key="link">
-          <a
-            href="https://ant.design"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Ant Design
-          </a>
-        </Menu.Item>
       </Menu>
     </div>
   );
 }
 
 export default connect(
-  ({ global, loading }: { global: any; loading: any }) => ({
+  ({
     global,
-    loading: loading.models.global,
+    categoriesModel,
+    loading,
+  }: {
+    global: any;
+    categoriesModel: any;
+    loading: any;
+  }) => ({
+    global,
+    categoriesModel,
+    loading: loading.models.categoriesModel,
   }),
 )(Categories);
