@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Menu, message, Empty } from 'antd';
-import LeftBar from '@/components/leftBar/leftBar';
+import MainBar from '@/components/mainBar/mainBar';
 import Categories from '@/components/categories/categories';
 import { connect } from 'umi';
 import cloudFunc from '@/utils/cloudFunc';
@@ -22,7 +22,8 @@ function Index() {
   }
   return (
     <div className={styles.body}>
-      <LeftBar />
+      <MainBar />
+      <Categories />
     </div>
   );
 }
