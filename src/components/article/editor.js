@@ -14,38 +14,20 @@ import { list, listType } from '@/data/nav';
 import { isFuncAndRun, isEmpty } from '@/utils/helper';
 import { addArticle, updateArticle, getArticle } from '@/utils/tcb';
 
-interface formType {
-  name: string;
-}
-interface propsType {
-  children?: ReactElement;
-  onSuccess?: Function;
-  onCancel?: Function;
-  articleId?: string;
-}
-
-const LAYOUT_FORM_LAYOUT = {
-  labelCol: {
-    flex: '0 0 80px',
-    xs: { flex: '0 0 80px' },
-    sm: { flex: '0 0 80px' },
-  },
-};
-
-function Editor(props: propsType) {
+function Editor(props) {
   const { onSuccess, onCancel, articleId = '' } = props;
   const [form] = Form.useForm();
 
-  function onFinish(values: formType) {
+  function onFinish(values) {
     if (!isEmpty(articleId)) {
-      updateArticle(articleId, values).then((res: any) => {
+      updateArticle(articleId, values).then(res => {
         if (res?.updated) {
           message.success('保存成功！');
           isFuncAndRun(onSuccess);
         }
       });
     } else {
-      addArticle(values).then((res: any) => {
+      addArticle(values).then(res => {
         if (res?.id) {
           message.success('保存成功！');
           isFuncAndRun(onSuccess);
@@ -54,8 +36,8 @@ function Editor(props: propsType) {
     }
   }
 
-  function getArticleData(id: string) {
-    getArticle(id).then((res: any) => {
+  function getArticleData(id) {
+    getArticle(id).then(res => {
       if (res?.data && res.data.length !== 0) {
         const record = res.data[0];
         form.setFieldsValue(record);
@@ -79,7 +61,7 @@ function Editor(props: propsType) {
           {...LAYOUT_FORM_LAYOUT}
         >
           <Select>
-            {list.map((s: listType) => (
+            {list.map(s => (
               <Select.Option key={s.key} value={s.key}>
                 {s.title}
               </Select.Option>
@@ -90,7 +72,7 @@ function Editor(props: propsType) {
           <Input />
         </Form.Item>
         <Form.Item name="content" label="内容" required {...LAYOUT_FORM_LAYOUT}>
-          <Input.TextArea style={{height: 300}} />
+          <Input.TextArea style={{ height: 300 }} />
         </Form.Item>
         <Form.Item {...LAYOUT_FORM_LAYOUT}>
           <div

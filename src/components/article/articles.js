@@ -5,28 +5,20 @@ import { getArticles } from '@/utils/tcb';
 import AddArticle from './add';
 import styles from './index.less';
 
-interface listType {
-  title: string;
-  _id: string;
-  moduleKey: string;
-}
-interface propsType {
-  moduleKey: string;
-  onClickArticle?: Function;
-}
-
-function Articles(props: propsType) {
+function Articles(props) {
   const { moduleKey = '', onClickArticle } = props;
-  const [list, setList] = useState<listType[]>([]);
-  const [selected, setSelected] = useState<string>('');
-  const [loading,setLoading] = useState<Boolean>(false);
+  const [list, setList] = useState([]);
+  const [selected, setSelected] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  function getArticleList(key: string) {
-    if(!loading){
+  function getArticleList(key) {
+    if (!loading) {
       setLoading(true);
-      getArticles(key).then((res: any) => {
-        setList(res?.data || []);
-      }).finally(()=>setLoading(false));
+      getArticles(key)
+        .then(res => {
+          setList(res?.data || []);
+        })
+        .finally(() => setLoading(false));
     }
   }
 
@@ -39,7 +31,7 @@ function Articles(props: propsType) {
   return (
     <div className={styles.articleBlock}>
       <div className={styles.articleList}>
-        {list.map((s: listType, i) => (
+        {list.map((s, i) => (
           <AddArticle
             onSuccess={() => getArticleList(moduleKey)}
             edit
@@ -55,7 +47,7 @@ function Articles(props: propsType) {
                 s._id === selected ? styles.selected : ''
               }`}
             >
-              {i+1}.{s.title}
+              {i + 1}.{s.title}
             </div>
           </AddArticle>
         ))}

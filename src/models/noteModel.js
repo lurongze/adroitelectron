@@ -1,23 +1,9 @@
 import { Effect, ImmerReducer, Reducer, Subscription } from 'umi';
 import cloudFunc from '@/utils/cloudFunc';
 import { isFuncAndRun } from '@/utils/helper';
+import { message } from 'antd';
 
-export interface NoteModelState {
-  notes: Object[];
-}
-export interface NoteModelType {
-  namespace: 'noteModel';
-  state: NoteModelState;
-  effects: {
-    query: Effect;
-  };
-  reducers: {
-    save: Reducer<NoteModelState>;
-    // 启用 immer 之后
-    // save: ImmerReducer<IndexModelState>;
-  };
-}
-const NoteModel: NoteModelType = {
+const NoteModel = {
   namespace: 'noteModel',
   state: {
     notes: [],
@@ -35,15 +21,24 @@ const NoteModel: NoteModelType = {
     },
     *deleteNote({ payload }, { call, put }) {
       const res = yield call(cloudFunc.deleteNote, payload.id);
-      isFuncAndRun(payload?.success);
+      if (res?.data?.deleted && +res.data.deleted !== 0) {
+        isFuncAndRun(payload?.success);
+      } else {
+        message.error('删除失败！');
+      }
     },
     *saveNote({ payload }, { call, put }) {
       const res = yield call(cloudFunc.saveNote, payload);
-      isFuncAndRun(payload?.success);
+      console.log('res', res);
+      if (res?.data?.updated && +res.data.updated !== 0) {
+        isFuncAndRun(payload?.success);
+      } else {
+        message.error('保存失败！');
+      }
     },
   },
   reducers: {
-    save(state: any, action: any) {
+    save(state, action) {
       return {
         ...state,
         ...action.payload,

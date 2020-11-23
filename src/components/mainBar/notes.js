@@ -20,38 +20,25 @@ import { PlusOutlined } from '@ant-design/icons';
 import cloudFunc from '@/utils/cloudFunc';
 import styles from './mainBar.less';
 
-interface formType {
-  name: string;
-}
-interface propsType {
-  children?: ReactElement;
-  onSuccess?: Function;
-  onCancel?: Function;
-  noteId?: string;
-  noteModel?: any;
-  loading?: boolean;
-  dispatch?: any;
-}
-
-function Notes(props: propsType) {
+function Notes(props) {
   const {
     loading,
     dispatch,
     noteModel: { notes = [] },
   } = props;
-  const inputRef = useRef<any>(null);
-  const inputNumberRef = useRef<any>(null);
-  const [list, setList] = useState<Object[]>([]);
+  const inputRef = useRef(null);
+  const inputNumberRef = useRef(null);
+  const [list, setList] = useState([]);
 
-  function clickRow(id: string = '') {
-    let resList = list.map((s: any) => {
+  function clickRow(id) {
+    let resList = list.map(s => {
       if (s._id === id) {
         return { ...s, edit: true };
       }
       return { ...s, edit: false };
     });
     if (isEmpty(id)) {
-      resList = resList.filter((s: any) => {
+      resList = resList.filter(s => {
         if (s._id.startsWith('tmp') && isEmpty(s.title)) {
           return false;
         }
@@ -62,7 +49,7 @@ function Notes(props: propsType) {
   }
 
   function addRow() {
-    let resList = list.map((s: any) => ({ ...s, edit: false }));
+    let resList = list.map(s => ({ ...s, edit: false }));
     resList = [
       ...resList,
       {
@@ -75,7 +62,7 @@ function Notes(props: propsType) {
     setList(resList);
   }
 
-  function removeNote(id: string) {
+  function removeNote(id) {
     dispatch({
       type: 'noteModel/deleteNote',
       payload: {
@@ -90,7 +77,7 @@ function Notes(props: propsType) {
     });
   }
 
-  function saveRow(row: any) {
+  function saveRow(row) {
     const title = inputRef?.current?.state?.value || '';
     const sort = inputNumberRef?.current?.state?.value || 50;
     if (!isEmpty(title)) {
@@ -116,7 +103,7 @@ function Notes(props: propsType) {
       title: '笔记名',
       key: '_id',
       width: 400,
-      render(text: any, row: any) {
+      render(text, row) {
         if (row.edit) {
           return (
             <Input
@@ -134,7 +121,7 @@ function Notes(props: propsType) {
       title: '排序',
       key: '_id',
       width: 100,
-      render(text: any, row: any) {
+      render(text, row) {
         if (row.edit) {
           return (
             <InputNumber
@@ -152,7 +139,7 @@ function Notes(props: propsType) {
       key: '_id',
       align: 'center',
       width: 150,
-      render(text: any, row: any) {
+      render(text, row) {
         let btns = [
           <a onClick={() => clickRow(row._id)} className={styles.actionItem}>
             编辑
@@ -185,7 +172,7 @@ function Notes(props: propsType) {
 
   useEffect(() => {
     if (notes.length !== 0) {
-      setList(notes.map((s: any) => ({ ...s, edit: false })));
+      setList(notes.map(s => ({ ...s, edit: false })));
     }
   }, [notes]);
 
@@ -198,6 +185,7 @@ function Notes(props: propsType) {
         pagination={false}
         // showHeader={false}
         search={false}
+        rowKey="_id"
         toolbar={{
           title: '',
           subTitle: '我的笔记',
@@ -218,9 +206,7 @@ function Notes(props: propsType) {
   );
 }
 
-export default connect(
-  ({ noteModel, loading }: { noteModel: any; loading: any }) => ({
-    noteModel,
-    loading: loading.models.noteModel,
-  }),
-)(Notes);
+export default connect(({ noteModel, loading }) => ({
+  noteModel,
+  loading: loading.models.noteModel,
+}))(Notes);

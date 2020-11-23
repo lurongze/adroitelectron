@@ -1,9 +1,4 @@
-interface listType {
-  title: string;
-  key: string;
-}
-
-const list: listType[] = [
+const list = [
   { title: 'Html', key: 'html' },
   { title: 'Css', key: 'css' },
   { title: 'JavaScript', key: 'JavaScript' },

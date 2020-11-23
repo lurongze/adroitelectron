@@ -2,22 +2,7 @@ import { Effect, ImmerReducer, Reducer, Subscription } from 'umi';
 import cloudFunc from '@/utils/cloudFunc';
 import { isFuncAndRun } from '@/utils/helper';
 
-export interface CategoriesModelState {
-  categories: Object[];
-}
-export interface CategoriesModelType {
-  namespace: 'categoriesModel';
-  state: CategoriesModelState;
-  effects: {
-    query: Effect;
-  };
-  reducers: {
-    save: Reducer<CategoriesModelState>;
-    // 启用 immer 之后
-    // save: ImmerReducer<IndexModelState>;
-  };
-}
-const CategoriesModel: CategoriesModelType = {
+const CategoriesModel = {
   namespace: 'categoriesModel',
   state: {
     categories: [
@@ -48,7 +33,7 @@ const CategoriesModel: CategoriesModelType = {
     },
   },
   reducers: {
-    save(state: any, action: any) {
+    save(state, action) {
       return {
         ...state,
         ...action.payload,

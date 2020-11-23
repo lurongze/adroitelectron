@@ -18,25 +18,16 @@ const renderers = {
   },
 };
 
-interface listType {
-  title: string;
-  _id: string;
-  articleId: string;
-}
-interface propsType {
-  articleId: string;
-}
-
-function Article(props: propsType) {
+function Article(props) {
   const { articleId = '' } = props;
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(false);
 
-  function getArticleData(id: string) {
+  function getArticleData(id) {
     if (!loading) {
       setLoading(true);
       getArticle(id)
-        .then((res: any) => {
+        .then(res => {
           if (res?.data && res.data.length !== 0) {
             const record = res.data[0];
             setContent(record.content);

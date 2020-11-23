@@ -3,36 +3,21 @@ import { Tooltip } from 'antd';
 import { isFuncAndRun } from '@/utils/helper';
 import { Menu, message, Modal } from 'antd';
 import { connect } from 'umi';
-import {
-  HomeFilled,
-  BookFilled,
-  FolderAddFilled,
-} from '@ant-design/icons';
+import { HomeFilled, BookFilled, FolderAddFilled } from '@ant-design/icons';
 import { getNotes } from '@/utils/tcb';
 import Notes from './notes';
 import styles from './mainBar.less';
 
 const { SubMenu } = Menu;
 
-interface propsType {
-  onClickItem?: Function;
-  global?: any;
-  noteModel?: any;
-  dispatch?: any;
-}
-interface listType {
-  _id: string;
-  title: string;
-}
-
-function MainBar(props: propsType) {
+function MainBar(props) {
   const {
     dispatch,
     noteModel: { notes = [] },
     global: { currentNote = '' },
   } = props;
-  const [openKeys, setOpenKeys] = useState<string[]>([]);
-  const [visible, setVisible] = useState<boolean>(false);
+  const [openKeys, setOpenKeys] = useState([]);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     dispatch({
@@ -73,7 +58,7 @@ function MainBar(props: propsType) {
             }
           }}
         >
-          {notes.map((s: listType) => (
+          {notes.map(s => (
             <Menu.Item
               key={s._id}
               onClick={() => {
@@ -118,18 +103,8 @@ function MainBar(props: propsType) {
   );
 }
 
-export default connect(
-  ({
-    global,
-    noteModel,
-    loading,
-  }: {
-    global: any;
-    noteModel: any;
-    loading: any;
-  }) => ({
-    global,
-    noteModel,
-    loading: loading.models.noteModel,
-  }),
-)(MainBar);
+export default connect(({ global, noteModel, loading }) => ({
+  global,
+  noteModel,
+  loading: loading.models.noteModel,
+}))(MainBar);

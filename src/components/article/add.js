@@ -3,22 +3,15 @@ import { Input, Modal, message } from 'antd';
 import { isFuncAndRun } from '@/utils/helper';
 import Editor from './editor';
 
-interface propsType {
-  children: ReactElement;
-  onSuccess?: Function;
-  edit?: Boolean;
-  articleId?: string;
-}
-
-function AddArticle(props: propsType) {
-  const { children,onSuccess, edit = false, articleId='' } = props;
+function AddArticle(props) {
+  const { children, onSuccess, edit = false, articleId = '' } = props;
   const [visible, setVisible] = useState(false);
 
   return (
     <>
       {edit
         ? cloneElement(children, {
-          onDoubleClick: () => {
+            onDoubleClick: () => {
               setVisible(true);
             },
           })
@@ -33,7 +26,7 @@ function AddArticle(props: propsType) {
         visible={visible}
         destroyOnClose
         onCancel={() => setVisible(false)}
-        width='80vw'
+        width="80vw"
       >
         <Editor
           articleId={articleId}
