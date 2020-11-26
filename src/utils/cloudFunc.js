@@ -76,15 +76,15 @@ class cloudFunc {
       .remove();
   }
 
-  queryNotes() {
+  queryCategories() {
     return db
-      .collection('notes')
+      .collection('categories')
       .orderBy('sort', 'asc')
       .limit(100)
       .get();
   }
 
-  saveNote(values) {
+  saveCategory(values) {
     const { _id = '', edit, _openid, success, ...resValues } = values;
     let id = _id;
     if (_id.startsWith('tmp')) {
@@ -92,22 +92,20 @@ class cloudFunc {
     }
 
     if (id === '') {
-      return db.collection('notes').add(resValues);
+      return db.collection('categories').add(resValues);
     }
     return db
-      .collection('notes')
+      .collection('categories')
       .doc(id)
       .update(resValues);
   }
 
-  deleteNote(id) {
+  deleteCategory(id) {
     return db
-      .collection('notes')
+      .collection('categories')
       .doc(id)
       .remove();
   }
-
-
 }
 
 export default new cloudFunc();
