@@ -3,18 +3,11 @@ export function array2Tree(data, pid) {
   let res = [];
   data.forEach(item => {
     if (item.parentId === pid) {
-      let itemChildren = array2Tree(data, item.id);
+      let itemChildren = array2Tree(data, item._id);
       if (itemChildren.length) {
         item.children = itemChildren;
       }
-      res.push({
-        ...item,
-        ...{
-          value: item.id,
-          title: item.name,
-          key: item.id,
-        },
-      });
+      res.push(item);
     }
   });
   return res;

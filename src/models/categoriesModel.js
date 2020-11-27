@@ -11,7 +11,9 @@ const CategoriesModel = {
     *query({ payload }, { call, put }) {},
     *queryCategories({ payload }, { call, put }) {
       const res = yield call(cloudFunc.queryCategories);
-      const resList = array2Tree(res?.data || []);
+      // const resList = array2Tree(res?.data || [], '');
+      // console.log('modelData', res, resList);
+      const resList = res?.data || [];
       yield put({
         type: 'save',
         payload: {

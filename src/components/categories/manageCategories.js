@@ -15,7 +15,7 @@ import {
 } from 'antd';
 import { connect } from 'umi';
 import ProTable from '@ant-design/pro-table';
-import { isFuncAndRun, isEmpty } from '@/utils/helper';
+import { isFuncAndRun, isEmpty, array2Tree } from '@/utils/helper';
 import { PlusOutlined } from '@ant-design/icons';
 import cloudFunc from '@/utils/cloudFunc';
 import styles from './index.less';
@@ -29,9 +29,16 @@ function ManageCategories(props) {
   const inputRef = useRef(null);
   const inputNumberRef = useRef(null);
   const [list, setList] = useState([]);
+  const [storeList, setStoreList] = useState([]);
+
+  function storeAndSetList(resList = []) {
+    const treeList = array2Tree(resList, '');
+    setStoreList(resList.map(s => ({ ...s, children: undefined })));
+    setList(treeList);
+  }
 
   function clickRow(id) {
-    let resList = list.map(s => {
+    let resList = [...storeList].map(s => {
       if (s._id === id) {
         return { ...s, edit: true };
       }
@@ -45,32 +52,33 @@ function ManageCategories(props) {
         return true;
       });
     }
-    setList(resList);
+    storeAndSetList(resList);
   }
 
-  function addRow() {
-    let resList = list.map(s => ({ ...s, edit: false }));
-    resList = [
-      ...resList,
+  function addRow(parentId = '') {
+    const _id = `tmp${new Date().getTime()}`;
+    const resList = [
+      ...storeList,
       {
-        _id: `tmp${new Date().getTime()}`,
+        _id,
         title: '',
-        sort: resList[resList.length - 1]?.sort || 50,
+        parentId,
+        sort: 50,
         edit: true,
       },
     ];
-    setList(resList);
+    storeAndSetList(resList);
   }
 
-  function removeNote(id) {
+  function removeCategory(id) {
     dispatch({
-      type: 'noteModel/deleteNote',
+      type: 'categoriesModel/deleteCategory',
       payload: {
         id,
         success: () => {
           message.success('删除成功！');
           dispatch({
-            type: 'noteModel/queryNotes',
+            type: 'categoriesModel/queryCategories',
           });
         },
       },
@@ -82,7 +90,7 @@ function ManageCategories(props) {
     const sort = inputNumberRef?.current?.state?.value || 50;
     if (!isEmpty(title)) {
       dispatch({
-        type: 'noteModel/saveNote',
+        type: 'categoriesModel/saveCategory',
         payload: {
           ...row,
           title,
@@ -90,7 +98,7 @@ function ManageCategories(props) {
           success: () => {
             message.success('保存成功！');
             dispatch({
-              type: 'noteModel/queryNotes',
+              type: 'categoriesModel/queryCategories',
             });
           },
         },
@@ -98,14 +106,21 @@ function ManageCategories(props) {
     }
   }
 
+  useEffect(() => {
+    if (categories.length !== 0) {
+      const resList = categories.map(s => ({ ...s, edit: false }));
+      storeAndSetList(resList);
+    }
+  }, [categories]);
+
   const columns = [
     {
-      title: '笔记名',
+      title: '分类名',
       key: '_id',
-      width: 400,
+      width: 600,
       className: styles.rowTr,
       render(text, row) {
-        if (!row.edit) {
+        if (row.edit) {
           return (
             <Input
               defaultValue={row.title}
@@ -115,7 +130,7 @@ function ManageCategories(props) {
             />
           );
         }
-        return row.title;
+        return row.title || '';
       },
     },
     {
@@ -139,9 +154,12 @@ function ManageCategories(props) {
       title: '操作',
       key: '_id',
       align: 'center',
-      width: 150,
+      width: 250,
       render(text, row) {
         let btns = [
+          <a onClick={() => addRow(row._id)} className={styles.actionItem}>
+            新增子类
+          </a>,
           <a onClick={() => clickRow(row._id)} className={styles.actionItem}>
             编辑
           </a>,
@@ -149,7 +167,7 @@ function ManageCategories(props) {
             title="确认删除吗?"
             okText="删除"
             cancelText="取消"
-            onConfirm={() => removeNote(row._id)}
+            onConfirm={() => removeCategory(row._id)}
           >
             <a className={styles.actionItem} style={{ color: '#ff4d4f' }}>
               删除
@@ -171,12 +189,6 @@ function ManageCategories(props) {
     },
   ];
 
-  useEffect(() => {
-    if (categories.length !== 0) {
-      setList(categories.map(s => ({ ...s, edit: false })));
-    }
-  }, [categories]);
-
   return (
     <>
       <ProTable
@@ -185,7 +197,10 @@ function ManageCategories(props) {
         dataSource={list}
         pagination={false}
         search={false}
-        expandable={{ defaultExpandAllRows: true }}
+        expandable={{
+          defaultExpandAllRows: true,
+          expandedRowKeys: storeList.map(s => s._id),
+        }}
         rowKey="_id"
         toolbar={{
           title: '',
@@ -196,6 +211,7 @@ function ManageCategories(props) {
               key="button"
               icon={<PlusOutlined />}
               type="primary"
+              disabled={storeList.find(s => s.edit)}
             >
               新建
             </Button>,

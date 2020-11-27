@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Menu, message, Empty } from 'antd';
+import Editor from '@monaco-editor/react';
+import { DiffEditor as MonacoDiffEditor } from '@monaco-editor/react';
 import MainBar from '@/components/mainBar/mainBar';
 import Categories from '@/components/categories/categories';
 import { connect } from 'umi';
@@ -8,7 +10,7 @@ import styles from './index.less';
 
 function Index() {
   const [initing, setIniting] = useState(true);
-
+  const [code, setCode] = useState('');
   useEffect(() => {
     cloudFunc.signIn(() => setIniting(false));
   }, []);
@@ -24,6 +26,8 @@ function Index() {
     <div className={styles.body}>
       <MainBar />
       <Categories />
+      <Editor height="90vh" language="markdown" />
+      {/* <MonacoDiffEditor height="90vh" language="javascript" /> */}
     </div>
   );
 }

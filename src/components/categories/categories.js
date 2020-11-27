@@ -9,10 +9,18 @@ const { SubMenu } = Menu;
 
 function Categories(props) {
   const {
+    dispatch,
     global: { showNav, currentNote },
     categoriesModel: { categories = [] },
   } = props;
   const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    dispatch({
+      type: 'categoriesModel/queryCategories',
+    });
+  }, []);
+
   return (
     <>
       <div className={`${styles.categories} ${!showNav ? styles.hide : ''}`}>
@@ -59,6 +67,7 @@ function Categories(props) {
         footer={null}
         visible={visible}
         destroyOnClose
+        width="80vw"
         onCancel={() => setVisible(false)}
       >
         <ManageCategories

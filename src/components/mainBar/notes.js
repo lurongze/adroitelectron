@@ -98,6 +98,12 @@ function Notes(props) {
     }
   }
 
+  useEffect(() => {
+    if (notes.length !== 0) {
+      setList(notes.map(s => ({ ...s, edit: false })));
+    }
+  }, [notes]);
+
   const columns = [
     {
       title: '笔记名',
@@ -170,12 +176,6 @@ function Notes(props) {
     },
   ];
 
-  useEffect(() => {
-    if (notes.length !== 0) {
-      setList(notes.map(s => ({ ...s, edit: false })));
-    }
-  }, [notes]);
-
   return (
     <>
       <ProTable
@@ -195,6 +195,7 @@ function Notes(props) {
               key="button"
               icon={<PlusOutlined />}
               type="primary"
+              disabled={list.find(s => s.edit)}
             >
               新建
             </Button>,
