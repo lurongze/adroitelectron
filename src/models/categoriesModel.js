@@ -1,46 +1,21 @@
 import { Effect, ImmerReducer, Reducer, Subscription } from 'umi';
 import cloudFunc from '@/utils/cloudFunc';
-import { isFuncAndRun } from '@/utils/helper';
+import { isFuncAndRun, array2Tree } from '@/utils/helper';
 
 const CategoriesModel = {
   namespace: 'categoriesModel',
   state: {
-    categories: [
-      {
-        title: '分类一',
-        _id: '123',
-        children: [
-          {
-            title: '子类1',
-            _id: '1grfg23',
-            children: [
-              {
-                title: '子类1',
-                _id: '1grgrgr23',
-                children: [
-                  { title: '子类1', _id: '1tytyt23' },
-                  { title: '子类2', _id: '12grgrgrg3' },
-                ],
-              },
-              { title: '子类2', _id: '12gtjyjtyj3' },
-            ],
-          },
-          { title: '子类2', _id: '1bgtryhtry23' },
-        ],
-      },
-      { title: '分类二', _id: '1w23' },
-      { title: '分类三', _id: '12d3' },
-      { title: '分类四', _id: '1d23' },
-    ],
+    categories: [],
   },
   effects: {
     *query({ payload }, { call, put }) {},
     *queryCategories({ payload }, { call, put }) {
       const res = yield call(cloudFunc.queryCategories);
+      const resList = array2Tree(res?.data || []);
       yield put({
         type: 'save',
         payload: {
-          notes: res?.data || [],
+          categories: resList,
         },
       });
     },
