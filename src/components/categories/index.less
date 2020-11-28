@@ -39,6 +39,34 @@
 .menuComponent {
   width: 256px;
   height: calc(100vh - 50px);
+  .menuItem{
+    height: 40px;
+    line-height: 40px;
+    box-sizing: border-box;
+    padding-left: 10px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    cursor: pointer;
+    &:hover{
+      background-color: #e5e5e5;
+    }
+    .menuIcon{
+      margin-right: 5px;
+      &.hidden{
+        visibility: hidden;
+      }
+    }
+  }
+  .subMenu{
+    display: block;
+    height: auto;
+    transition: all 1s ease-in-out;
+    overflow: hidden;
+    &.hidden{
+      height: 0;
+    }
+  }
 }
 .actionItem {
   margin: 0 5px;

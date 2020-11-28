@@ -1,7 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Fragment } from 'react';
 import { Menu, message, Tooltip, Modal } from 'antd';
 import { connect } from 'umi';
-import { SettingFilled } from '@ant-design/icons';
+import classnames from 'classnames';
+import { isFuncAndRun, isEmpty, array2Tree } from '@/utils/helper';
+import {
+  CaretDownOutlined,
+  CarOutlined,
+  SettingFilled,
+} from '@ant-design/icons';
 import ManageCategories from './manageCategories';
 import styles from './index.less';
 
@@ -14,12 +20,65 @@ function Categories(props) {
     categoriesModel: { categories = [] },
   } = props;
   const [visible, setVisible] = useState(false);
+  const [treeList, setTreeList] = useState([]);
+  const [hideList, setHideList] = useState([]);
+
+  function toogleMenu(id, isIn, len = 0) {
+    if (!!len) {
+      let resList = [];
+      if (isIn) {
+        resList = hideList.filter(s => s !== id);
+      } else {
+        resList = [...hideList, id];
+      }
+      setHideList(resList);
+    }
+  }
 
   useEffect(() => {
     dispatch({
       type: 'categoriesModel/queryCategories',
     });
   }, []);
+
+  useEffect(() => {
+    if (categories) {
+      const resList = array2Tree(categories, '');
+      setTreeList(resList);
+    }
+  }, [categories]);
+
+  function treeRender(treeData) {
+    return treeData.map(s => {
+      const inHideList = hideList.includes(s._id);
+      const children = s?.children || [];
+      const childrenLen = children.length;
+      return (
+        <div key={s._id}>
+          <div
+            className={styles.menuItem}
+            title={s.title + s._id}
+            onClick={() => toogleMenu(s._id, inHideList, childrenLen)}
+          >
+            <CaretDownOutlined
+              className={classnames(styles.menuIcon, {
+                [styles.hidden]: !childrenLen,
+              })}
+              style={{ marginLeft: `${s.level * 15}px` }}
+            />
+            {s.title}
+            {s._id}
+          </div>
+          {/* {!inHideList && treeRender(children)} */}
+          <div className={classnames(styles.subMenu,{
+            [styles.hidden]:inHideList
+          })}>
+            {treeRender(children)}
+          </div>
+        </div>
+      );
+    });
+  }
 
   return (
     <>
@@ -34,33 +93,7 @@ function Categories(props) {
             <SettingFilled onClick={() => setVisible(true)} />
           </div>
         </div>
-        <Menu className={styles.menuComponent} mode="inline" theme="light">
-          {categories.map(s => (
-            <Menu.Item key={s.title}>N{s.title}</Menu.Item>
-          ))}
-          <Menu.Item key="2">Navigation Two</Menu.Item>
-          <SubMenu
-            key="sub1"
-            title={
-              <span onDoubleClick={() => message.success('弹层！')}>
-                Navigation Two
-              </span>
-            }
-          >
-            <Menu.Item key="3">Option 3</Menu.Item>
-            <Menu.Item key="4">Option 4</Menu.Item>
-            <SubMenu key="sub1-2" title="Submenu">
-              <Menu.Item key="5">Option 5</Menu.Item>
-              <Menu.Item key="6">Option 6</Menu.Item>
-            </SubMenu>
-          </SubMenu>
-          <SubMenu key="sub2" title="Navigation Three">
-            <Menu.Item key="7">Option 7</Menu.Item>
-            <Menu.Item key="8">Option 8</Menu.Item>
-            <Menu.Item key="9">Option 9</Menu.Item>
-            <Menu.Item key="10">Option 10</Menu.Item>
-          </SubMenu>
-        </Menu>
+        <div className={styles.menuComponent}>{treeRender(treeList)}</div>
       </div>
       <Modal
         closable={false}

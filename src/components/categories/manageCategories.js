@@ -147,7 +147,7 @@ function ManageCategories(props) {
             />
           );
         }
-        return row.sort;
+        return row.sort + '-' + row.level||'-1';
       },
     },
     {

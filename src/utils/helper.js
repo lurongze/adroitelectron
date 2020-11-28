@@ -1,13 +1,13 @@
 // 需要插入父节点id，pid为null或''，就是找root节点，然后root节点再去找自己的子节点
-export function array2Tree(data, pid) {
+export function array2Tree(data, pid, level=0) {
   let res = [];
   data.forEach(item => {
     if (item.parentId === pid) {
-      let itemChildren = array2Tree(data, item._id);
+      let itemChildren = array2Tree(data, item._id, level+1);
       if (itemChildren.length) {
         item.children = itemChildren;
       }
-      res.push(item);
+      res.push({...item, level});
     }
   });
   return res;

@@ -26,7 +26,9 @@ function Index() {
     <div className={styles.body}>
       <MainBar />
       <Categories />
-      <Editor height="90vh" language="markdown" />
+      <div style={{ flex: 1, height: '100vh' }}>
+        <Editor height="90vh" language="javascript" />
+      </div>
       {/* <MonacoDiffEditor height="90vh" language="javascript" /> */}
     </div>
   );
