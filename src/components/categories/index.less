@@ -12,9 +12,9 @@
 .noteHead {
   display: flex;
   width: 256px;
-  height: 50px;
   color: rgba(255, 255, 255, 0.65);
   background: #001529;
+  flex-wrap: wrap;
   .noteTitle {
     width: 206px;
     height: 50px;
@@ -25,6 +25,7 @@
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
+    cursor: pointer;
   }
   .setting {
     display: flex;
@@ -39,31 +40,51 @@
 .menuComponent {
   width: 256px;
   height: calc(100vh - 50px);
-  .menuItem{
+  background-color: #f2f6fc;
+  .menuItem {
+    display: flex;
     height: 40px;
-    line-height: 40px;
+    align-items: center;
     box-sizing: border-box;
-    padding-left: 10px;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
     cursor: pointer;
-    &:hover{
-      background-color: #e5e5e5;
+    padding-left: 5px;
+    color: #333333;
+    .menuTitle {
+      flex: 1;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      height: 40px;
+      line-height: 40px;
     }
-    .menuIcon{
-      margin-right: 5px;
-      &.hidden{
+    &.current {
+      background-color: #ebeef5;
+    }
+    &:hover {
+      background-color: #ebeef5;
+    }
+    .menuIcon {
+      margin-right: 2px;
+      padding: 5px;
+      border-radius: 5px;
+      &:hover {
+        background-color: #e4e7ed;
+      }
+      &.hidden {
         visibility: hidden;
+      }
+      &.up {
+        transform: rotate(180deg);
       }
     }
   }
-  .subMenu{
+  .subMenu {
+    // 不用display: none；这样虽然没有动画效果，但是效率相对好一点
     display: block;
     height: auto;
     transition: all 1s ease-in-out;
     overflow: hidden;
-    &.hidden{
+    &.hidden {
       height: 0;
     }
   }
@@ -73,4 +94,17 @@
 }
 .rowTr {
   display: flex;
+}
+.popverContainer {
+  .popverItem {
+    width: 100%;
+    box-sizing: border-box;
+    height: 30px;
+    line-height: 30px;
+    padding: 0 10px;
+    cursor: pointer;
+    &:hover {
+      background-color: #ebeef5;
+    }
+  }
 }
