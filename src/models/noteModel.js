@@ -1,6 +1,6 @@
 import { Effect, ImmerReducer, Reducer, Subscription } from 'umi';
 import cloudFunc from '@/utils/cloudFunc';
-import { isFuncAndRun } from '@/utils/helper';
+import { isFuncAndRun, isEmpty } from '@/utils/helper';
 import { message } from 'antd';
 
 const NoteModel = {
@@ -29,8 +29,7 @@ const NoteModel = {
     },
     *saveNote({ payload }, { call, put }) {
       const res = yield call(cloudFunc.saveNote, payload);
-      console.log('res', res);
-      if (res?.data?.updated && +res.data.updated !== 0) {
+      if ((res?.updated && +res.updated !== 0) || !isEmpty(res?.id)) {
         isFuncAndRun(payload?.success);
       } else {
         message.error('保存失败！');

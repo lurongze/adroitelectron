@@ -115,7 +115,12 @@ function Categories(props) {
     <>
       <div className={`${styles.categories} ${!showNav ? styles.hide : ''}`}>
         <NoteList />
-        <div className={styles.menuComponent}>{treeRender(treeList)}</div>
+        <div className={styles.menuComponent}>
+          <div className={classnames(styles.menuItem, styles.absoluteItem)}>
+            <div className={styles.menuTitle}>新增分类</div>
+          </div>
+          {treeRender(treeList)}
+        </div>
       </div>
       <Modal
         closable={false}

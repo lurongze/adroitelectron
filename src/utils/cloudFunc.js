@@ -14,6 +14,7 @@ import { isFuncAndRun } from '@/utils/helper';
 const envId = 'wt-share-43bafa';
 let app = null; // 得放到外面才行
 let db = null;
+let auth = null;
 
 class cloudFunc {
   constructor() {
@@ -25,12 +26,40 @@ class cloudFunc {
     db = app.database();
     // console.log('constructor', app, db)
     // this.signIn();
-  }
-
-  signIn(callBack) {
-    var auth = app.auth({
+    auth = app.auth({
       persistence: 'local',
     });
+  }
+
+  async isLogin() {
+    const loginState = await auth.getLoginState();
+    console.log('loginState', loginState);
+  }
+
+  signUpWithEmailAndPassword() {
+    return app
+      .auth()
+      .signUpWithEmailAndPassword('1946755280@qq.com', 'SA523BER');
+    // .then(() => {
+    //   // 发送验证邮件成功
+    // });
+  }
+
+  signInWithEmailAndPassword(cb) {
+    if(!app.auth().hasLoginState()){
+      app
+      .auth()
+      .signInWithEmailAndPassword('1946755280@qq.com', 'SA523BER')
+      .then(res=>{
+        isFuncAndRun(cb);
+      })
+    }else {
+      isFuncAndRun(cb);
+    }
+  }
+
+  // 匿名登录
+  signIn(callBack) {
     if (!auth.hasLoginState()) {
       auth
         .anonymousAuthProvider()

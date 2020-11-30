@@ -12,7 +12,7 @@ async function login() {
   console.log('loginState.isAnonymousAuth', loginState.isAnonymousAuth); // true
 }
 
-login();
+// login();
 
 export function menuSave(values) {
   return db.collection('menu').add(values);

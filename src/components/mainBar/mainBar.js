@@ -4,7 +4,6 @@ import { isFuncAndRun } from '@/utils/helper';
 import { Menu, message, Modal } from 'antd';
 import { connect } from 'umi';
 import { HomeFilled, BookFilled, FolderAddFilled } from '@ant-design/icons';
-import { getNotes } from '@/utils/tcb';
 import Notes from './notes';
 import styles from './mainBar.less';
 

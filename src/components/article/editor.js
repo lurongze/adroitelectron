@@ -13,7 +13,6 @@ import {
 import { list, listType } from '@/data/nav';
 import { isFuncAndRun, isEmpty } from '@/utils/helper';
 import Editor from '@monaco-editor/react';
-import { addArticle, updateArticle, getArticle } from '@/utils/tcb';
 
 function Editor(props) {
   const { onSuccess, onCancel, articleId = '' } = props;
