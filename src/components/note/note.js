@@ -4,17 +4,17 @@ import { Input, message, Modal, Popover, Spin } from 'antd';
 import { connect } from 'umi';
 import classnames from 'classnames';
 import {
-  HomeFilled,
-  BookFilled,
-  FolderAddFilled,
+  CaretDownOutlined,
   PlusOutlined,
   EditOutlined,
   DeleteOutlined,
   MoreOutlined,
+  AccountBookTwoTone,
+  BookOutlined,
 } from '@ant-design/icons';
 import styles from '../categories/index.less';
-import { removeNote } from '@/utils/tcb';
 
+let timer = null;
 function Note(props) {
   const {
     dispatch,
@@ -23,7 +23,7 @@ function Note(props) {
     loading,
   } = props;
 
-  const [showNotes, setShowNotes] = useState(false);
+  const [showNotes, setShowNotes] = useState(true);
   const [eidtId, setEditId] = useState('');
   const [list, setList] = useState([]);
 
@@ -53,25 +53,26 @@ function Note(props) {
     }
   }
 
-
-  function removeNote(s){
+  function removeNote(s) {
     Modal.confirm({
       title: '确认删除笔记吗？',
-      onOk:()=>{
+      okText: '删除',
+      cancelText: '取消',
+      onOk: () => {
         dispatch({
           type: 'noteModel/deleteNote',
           payload: {
             id: s._id,
             success: () => {
-              message.success('sh成功！');
+              message.success('删除成功！');
               dispatch({
                 type: 'noteModel/queryNotes',
               });
             },
           },
         });
-      }
-    })
+      },
+    });
   }
 
   function saveNote(e, row) {
@@ -99,6 +100,19 @@ function Note(props) {
     setList(list.filter(s => !isEmpty(s.title)));
   }
 
+  function handleClick(s) {
+    timer && clearTimeout(timer);
+    timer = setTimeout(() => {
+      selectNote(s);
+    }, 200);
+  }
+
+  function hanldDbClick(id) {
+    timer && clearTimeout(timer);
+    console.log('hanldDbClick');
+    setEditId(id);
+  }
+
   useEffect(() => {
     dispatch({
       type: 'noteModel/queryNotes',
@@ -108,6 +122,7 @@ function Note(props) {
   useEffect(() => {
     if (notes.length) {
       setList(notes);
+      selectNote(notes[0]);
     }
   }, [notes]);
 
@@ -122,9 +137,13 @@ function Note(props) {
           <EditOutlined />
           编辑
         </div>
-        <div className={styles.popverItem} key="2" onClick={()=>{
-          removeNote(s);
-        }}>
+        <div
+          className={styles.popverItem}
+          key="2"
+          onClick={() => {
+            removeNote(s);
+          }}
+        >
           <DeleteOutlined />
           删除
         </div>
@@ -138,7 +157,7 @@ function Note(props) {
         className={styles.noteTitle}
         onClick={() => setShowNotes(!showNotes)}
       >
-        {currentNote?.title || ''}
+        {currentNote?.title || '未选择笔记'}
       </div>
       {showNotes && (
         <Spin spinning={loading}>
@@ -150,12 +169,13 @@ function Note(props) {
                 }}
                 className={styles.menuTitle}
               >
-                <PlusOutlined style={{ margin: '0 15px' }} />
+                <PlusOutlined style={{ margin: '0 5px' }} />
                 新增笔记
               </div>
             </div>
             {list.map(s => (
               <div
+                key={s._id}
                 className={classnames(styles.menuItem, {
                   [styles.current]: s._id === currentNote._id,
                 })}
@@ -173,8 +193,10 @@ function Note(props) {
                 ) : (
                   <div
                     className={styles.menuTitle}
-                    onClick={() => setCurrentCate(s._id)}
+                    onClick={() => handleClick(s)}
+                    onDoubleClick={() => hanldDbClick(s._id)}
                   >
+                    <BookOutlined style={{ margin: '0 5px' }} />
                     {s.title}
                   </div>
                 )}

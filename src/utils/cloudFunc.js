@@ -36,26 +36,50 @@ class cloudFunc {
     console.log('loginState', loginState);
   }
 
-  signUpWithEmailAndPassword() {
-    return app
-      .auth()
-      .signUpWithEmailAndPassword('1946755280@qq.com', 'SA523BER');
-    // .then(() => {
-    //   // 发送验证邮件成功
-    // });
-  }
-
-  signInWithEmailAndPassword(cb) {
-    if(!app.auth().hasLoginState()){
-      app
-      .auth()
-      .signInWithEmailAndPassword('1946755280@qq.com', 'SA523BER')
-      .then(res=>{
-        isFuncAndRun(cb);
+  // 注册邮箱
+  signUpWithEmailAndPassword(email, password, callBack, errCallback) {
+    return auth
+      .signUpWithEmailAndPassword(email, password)
+      .then(res => {
+        // 发送验证邮件成功
+        isFuncAndRun(callBack);
       })
-    }else {
-      isFuncAndRun(cb);
+      .catch(res => {
+        isFuncAndRun(errCallback);
+      });
+  }
+  checkHasLogin() {
+    return auth.hasLoginState();
+  }
+  signOut() {
+    auth.signOut();
+  }
+  // 邮箱登录
+  signInWithEmailAndPassword(email, password, callBack, errCallback) {
+    if (!auth.hasLoginState()) {
+      auth
+        .signInWithEmailAndPassword(email, password)
+        .then(res => {
+          isFuncAndRun(callBack);
+        })
+        .catch(res => {
+          isFuncAndRun(errCallback);
+        });
+    } else {
+      isFuncAndRun(callBack);
     }
+  }
+  // 重置邮箱登录密码
+  sendPasswordResetEmail(email, callBack, errCallback) {
+    auth
+      .sendPasswordResetEmail(email)
+      .then(() => {
+        // 发送重置密码邮件成功
+        isFuncAndRun(callBack);
+      })
+      .catch(res => {
+        isFuncAndRun(errCallback);
+      });
   }
 
   // 匿名登录
@@ -105,9 +129,10 @@ class cloudFunc {
       .remove();
   }
 
-  queryCategories() {
+  queryCategories(noteId) {
     return db
       .collection('categories')
+      .where({ noteId })
       .orderBy('sort', 'asc')
       .limit(100)
       .get();
@@ -132,6 +157,38 @@ class cloudFunc {
   deleteCategory(id) {
     return db
       .collection('categories')
+      .doc(id)
+      .remove();
+  }
+
+  queryArticles(cateId) {
+    return db
+      .collection('articles')
+      .where({ cateId })
+      .orderBy('sort', 'asc')
+      .limit(100)
+      .get();
+  }
+
+  saveArticle(values) {
+    const { _id = '', edit, _openid, success, ...resValues } = values;
+    let id = _id;
+    if (_id.startsWith('tmp')) {
+      id = '';
+    }
+
+    if (id === '') {
+      return db.collection('articles').add(resValues);
+    }
+    return db
+      .collection('articles')
+      .doc(id)
+      .update(resValues);
+  }
+
+  deleteArticles(id) {
+    return db
+      .collection('articles')
       .doc(id)
       .remove();
   }

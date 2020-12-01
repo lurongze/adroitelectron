@@ -3,7 +3,12 @@ import { Tooltip } from 'antd';
 import { isFuncAndRun } from '@/utils/helper';
 import { Menu, message, Modal } from 'antd';
 import { connect } from 'umi';
-import { HomeFilled, BookFilled, FolderAddFilled } from '@ant-design/icons';
+import {
+  HomeFilled,
+  BookFilled,
+  FolderAddFilled,
+  LogoutOutlined,
+} from '@ant-design/icons';
 import Notes from './notes';
 import styles from './mainBar.less';
 
@@ -12,6 +17,7 @@ const { SubMenu } = Menu;
 function MainBar(props) {
   const {
     dispatch,
+    onSignOut,
     noteModel: { notes = [] },
     global: { currentNote = '' },
   } = props;
@@ -82,6 +88,22 @@ function MainBar(props) {
           }}
         >
           <FolderAddFilled />
+        </Menu.Item>
+        <Menu.Item
+          key="4"
+          title="退出登录"
+          onClick={() => {
+            Modal.confirm({
+              title: '确认退出登录吗？',
+              okText: '退出',
+              cancelText: '取消',
+              onOk: () => {
+                isFuncAndRun(onSignOut);
+              },
+            });
+          }}
+        >
+          <LogoutOutlined />
         </Menu.Item>
       </Menu>
       <Modal

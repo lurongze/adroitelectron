@@ -3,37 +3,40 @@ import cloudFunc from '@/utils/cloudFunc';
 import { isFuncAndRun, isEmpty } from '@/utils/helper';
 import { message } from 'antd';
 
-const NoteModel = {
-  namespace: 'noteModel',
+const ArticleModel = {
+  namespace: 'articleModel',
   state: {
-    notes: [],
+    articles: [],
   },
   effects: {
     *query({ payload }, { call, put }) {},
-    *queryNotes({ payload }, { call, put }) {
-      const res = yield call(cloudFunc.queryNotes);
+    *queryArticles({ payload }, { call, put }) {
+      const res = yield call(cloudFunc.queryArticles, payload);
       yield put({
         type: 'save',
         payload: {
-          notes: res?.data || [],
+          articles: res?.data || [],
         },
       });
     },
-    *deleteNote({ payload }, { call, put }) {
-      const res = yield call(cloudFunc.deleteNote, payload.id);
+    *deleteArticle({ payload }, { call, put }) {
+      const res = yield call(cloudFunc.deleteArticles, payload.id);
       if (res?.deleted && +res.deleted !== 0) {
         isFuncAndRun(payload?.success);
       } else {
         message.error('删除失败！');
       }
     },
-    *saveNote({ payload }, { call, put }) {
-      const res = yield call(cloudFunc.saveNote, payload);
+    *saveArticle({ payload }, { call, put }) {
+      const res = yield call(cloudFunc.saveArticle, payload);
       if ((res?.updated && +res.updated !== 0) || !isEmpty(res?.id)) {
         isFuncAndRun(payload?.success);
       } else {
         message.error('保存失败！');
       }
+    },
+    *getArticle({ payload }, { call, put }) {
+      const res = yield call(cloudFunc.getArticle, payload);
     },
   },
   reducers: {
@@ -45,4 +48,4 @@ const NoteModel = {
     },
   },
 };
-export default NoteModel;
+export default ArticleModel;
