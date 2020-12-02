@@ -12,7 +12,7 @@ import styles from './index.less';
 
 function Index(props) {
   const {
-    global: { currentNote = {} },
+    global: { currentNote = {}, showNav },
   } = props;
   const [initing, setIniting] = useState(true);
   const [isLogin, setIsLogin] = useState(false);
@@ -23,6 +23,9 @@ function Index(props) {
       setIsLogin(true);
     }
   }, []);
+  useEffect(() => {
+    setShowNotes(false);
+  }, [currentNote]);
 
   return initing ? (
     <Empty description="页面初始化中..." image={Empty.PRESENTED_IMAGE_SIMPLE} />
@@ -36,26 +39,38 @@ function Index(props) {
           setIsLogin(false);
         }}
       />
-      <div className={styles.colNav}>
+      <div
+        className={classnames(styles.colNav, {
+          [styles.hide]: !showNav,
+        })}
+      >
         <div
           className={styles.noteTitle}
           onClick={() => setShowNotes(!showNotes)}
         >
           当前笔记：{currentNote?.title || '未选择笔记'}
         </div>
-        <div className={classnames(styles.moveNav, styles.noteNav, {
-          [styles.show]: showNotes
-        })}>
+        <div
+          className={classnames(styles.moveNav, styles.noteNav, {
+            [styles.show]: showNotes,
+          })}
+        >
           <NoteList />
         </div>
-        <div className={classnames(styles.moveNav, styles.cateNav,{
-          [styles.show]: !showNotes
-        })}>
+        <div
+          className={classnames(styles.moveNav, styles.cateNav, {
+            [styles.show]: !showNotes,
+          })}
+        >
           <Categories />
         </div>
       </div>
 
-      <div className={styles.colNav}>
+      <div
+        className={classnames(styles.colNav, {
+          [styles.hide]: !showNav,
+        })}
+      >
         <Articles />
       </div>
     </div>

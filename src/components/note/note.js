@@ -109,7 +109,6 @@ function Note(props) {
 
   function hanldDbClick(id) {
     timer && clearTimeout(timer);
-    console.log('hanldDbClick');
     setEditId(id);
   }
 
@@ -197,6 +196,48 @@ function Note(props) {
             </Popover>
           </div>
         ))}
+        {/* {Array.from(new Array(100).keys()).map(() => {
+          return (
+            <>
+              {list.map(s => (
+                <div
+                  key={s._id}
+                  className={classnames(styles.menuItem, {
+                    [styles.current]: s._id === currentNote._id,
+                  })}
+                  title={s.title}
+                >
+                  {eidtId === s._id ? (
+                    <div className={styles.menuTitle}>
+                      <Input
+                        defaultValue={s.title}
+                        autoFocus
+                        onBlur={() => handleBlur()}
+                        onPressEnter={e => saveNote(e, s)}
+                      />
+                    </div>
+                  ) : (
+                    <div
+                      className={styles.menuTitle}
+                      onClick={() => handleClick(s)}
+                      onDoubleClick={() => hanldDbClick(s._id)}
+                    >
+                      <BookOutlined style={{ margin: '0 5px' }} />
+                      {s.title}
+                    </div>
+                  )}
+                  <Popover
+                    placement="rightBottom"
+                    content={menu(s)}
+                    trigger="hover"
+                  >
+                    <MoreOutlined className={styles.menuIcon} />
+                  </Popover>
+                </div>
+              ))}
+            </>
+          );
+        })} */}
       </div>
     </Spin>
   );

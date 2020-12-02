@@ -24,12 +24,6 @@ function MainBar(props) {
   const [openKeys, setOpenKeys] = useState([]);
   const [visible, setVisible] = useState(false);
 
-  useEffect(() => {
-    dispatch({
-      type: 'noteModel/queryNotes',
-    });
-  }, []);
-
   return (
     <>
       <Menu
@@ -52,34 +46,7 @@ function MainBar(props) {
         >
           <HomeFilled style={{ color: 'goldenrod' }} />
         </Menu.Item>
-        <SubMenu
-          key="2"
-          title={<BookFilled />}
-          onTitleClick={() => {
-            if (openKeys.length !== 0) {
-              setOpenKeys([]);
-            } else {
-              setOpenKeys(['2']);
-            }
-          }}
-        >
-          {notes.map(s => (
-            <Menu.Item
-              key={s._id}
-              onClick={() => {
-                setOpenKeys([]);
-                localStorage.setItem('selectedNote', JSON.stringify(s));
-                dispatch({
-                  type: 'global/selectNote',
-                  payload: s,
-                });
-              }}
-            >
-              {s.title}
-            </Menu.Item>
-          ))}
-        </SubMenu>
-        <Menu.Item
+        {/* <Menu.Item
           key="3"
           title="新增笔记"
           onClick={() => {
@@ -88,7 +55,7 @@ function MainBar(props) {
           }}
         >
           <FolderAddFilled />
-        </Menu.Item>
+        </Menu.Item> */}
         <Menu.Item
           key="4"
           title="退出登录"

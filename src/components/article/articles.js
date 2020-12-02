@@ -9,7 +9,7 @@ import {
   EditOutlined,
   DeleteOutlined,
   MoreOutlined,
-  AccountBookTwoTone,
+  FileTextOutlined,
   BookOutlined,
 } from '@ant-design/icons';
 import styles from '../categories/index.less';
@@ -19,16 +19,20 @@ function Articles(props) {
   const {
     dispatch,
     articleModel: { articles = [] },
-    global: { currentNote = {}, currentCategory = {} },
-    loading,
+    global: { currentNote = {}, currentCategory = {}, currentArticle = {} },
+    loading = false,
   } = props;
 
   const [eidtId, setEditId] = useState('');
   const [list, setList] = useState([]);
-  const [currentArticle, setCurrentArticle] = useState({});
+  // const [currentArticle, setCurrentArticle] = useState({});
 
   function selectArticle(data) {
-    setCurrentArticle(data);
+    // setCurrentArticle(data);
+    dispatch({
+      type: 'global/selectArticle',
+      payload: data,
+    });
   }
 
   function addArticle() {
@@ -117,7 +121,9 @@ function Articles(props) {
   }
 
   useEffect(() => {
+    console.log('currentCategory', currentCategory);
     if (!isEmpty(currentCategory?._id)) {
+      console.log('currentCategory', currentCategory);
       dispatch({
         type: 'articleModel/queryArticles',
         payload: {
@@ -157,7 +163,7 @@ function Articles(props) {
   }
 
   return (
-    <div className={styles.menuComponent}>
+    <div className={classnames(styles.menuComponent, styles.articleBlock)}>
       <div className={classnames(styles.menuItem, styles.absoluteItem)}>
         <div
           onClick={() => {
@@ -193,7 +199,7 @@ function Articles(props) {
                 onClick={() => handleClick(s)}
                 onDoubleClick={() => hanldDbClick(s._id)}
               >
-                <BookOutlined style={{ margin: '0 5px' }} />
+                <FileTextOutlined style={{ margin: '0 5px' }} />
                 {s.title}
               </div>
             )}
@@ -202,6 +208,11 @@ function Articles(props) {
             </Popover>
           </div>
         ))}
+        {list.length === 0 && (
+          <div className={styles.menuItem} style={{ visibility: 'hidden' }}>
+            VISIBLE HIDDEN
+          </div>
+        )}
       </Spin>
     </div>
   );

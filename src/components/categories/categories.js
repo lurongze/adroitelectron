@@ -21,13 +21,13 @@ function Categories(props) {
   const {
     dispatch,
     loading,
-    global: { showNav, currentNote },
+    global: { showNav, currentNote = {}, currentCategory = {} },
     categoriesModel: { categories = [] },
   } = props;
   const [visible, setVisible] = useState(false);
   const [treeList, setTreeList] = useState([]);
   const [hideList, setHideList] = useState([]);
-  const [currentCate, setCurrentCate] = useState('');
+  // const [currentCate, setCurrentCate] = useState('');
   const [storeList, setStoreList] = useState([]);
   const [editId, setEditId] = useState('');
 
@@ -102,11 +102,11 @@ function Categories(props) {
   function hanldeClick(s) {
     timer && clearTimeout(timer);
     timer = setTimeout(() => {
-      setCurrentCate(s._id);
+      // setCurrentCate(s._id);
       dispatch({
         type: 'global/selectCategory',
-        payload: s
-      })
+        payload: s,
+      });
     }, 200);
   }
 
@@ -196,7 +196,8 @@ function Categories(props) {
         <Fragment key={s._id}>
           <div
             className={classnames(styles.menuItem, {
-              [styles.current]: s._id === currentCate,
+              [styles.current]:
+                currentCategory?._id && s._id === currentCategory._id,
             })}
             title={s.title}
           >
@@ -256,23 +257,18 @@ function Categories(props) {
             新增分类
           </div>
         </div>
-        <Spin spinning={loading}>{treeRender(treeList)}</Spin>
+        <Spin spinning={loading}>
+          {/* {Array.from(new Array(100).keys()).map(() => {
+            return <>{treeRender(treeList)}</>;
+          })} */}
+          {treeRender(treeList)}
+          {treeList.length === 0 && (
+            <div className={styles.menuItem} style={{ visibility: 'hidden' }}>
+              VISIBLE HIDDEN
+            </div>
+          )}
+        </Spin>
       </div>
-      <Modal
-        closable={false}
-        footer={null}
-        visible={visible}
-        destroyOnClose
-        width="80vw"
-        onCancel={() => setVisible(false)}
-      >
-        <ManageCategories
-          onSuccess={() => {
-            setVisible(false);
-          }}
-          onCancel={() => setVisible(false)}
-        />
-      </Modal>
     </>
   );
 }

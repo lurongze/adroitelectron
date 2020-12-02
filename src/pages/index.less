@@ -19,6 +19,11 @@
   height: 100vh;
   position: relative;
   overflow: hidden;
+  transition: width 0.2s ease-in-out;
+  &.hide {
+    width: 0;
+    overflow: hidden;
+  }
   .noteTitle {
     width: 256px;
     height: 40px;
@@ -36,7 +41,7 @@
   .moveNav {
     position: absolute;
     top: 40px;
-    transition: left .2s ease-in-out;
+    transition: left 0.2s ease-in-out;
     &.cateNav {
       left: 256px;
       &.show {

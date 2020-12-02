@@ -6,6 +6,7 @@ const GlobalModel = {
     showNav: true,
     currentNote: {},
     currentCategory: {},
+    currentArticle: {},
   },
   effects: {
     *query({ payload }, { call, put }) {},
@@ -23,12 +24,19 @@ const GlobalModel = {
         currentNote: action.payload,
       };
     },
-    selectCategory(state, action){
+    selectCategory(state, action) {
+      console.log('selectCategory', action.payload);
       return {
         ...state,
         currentCategory: action.payload,
       };
-    }
+    },
+    selectArticle(state, action) {
+      return {
+        ...state,
+        currentArticle: action.payload,
+      };
+    },
   },
 };
 export default GlobalModel;

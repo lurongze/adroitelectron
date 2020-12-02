@@ -134,7 +134,7 @@ class cloudFunc {
       .collection('categories')
       .where({ noteId })
       .orderBy('sort', 'asc')
-      .limit(100)
+      .limit(1000)
       .get();
   }
 
@@ -166,7 +166,7 @@ class cloudFunc {
       .collection('article')
       .where(params)
       .orderBy('sort', 'asc')
-      .limit(100)
+      .limit(1000)
       .get();
   }
 
@@ -191,6 +191,26 @@ class cloudFunc {
       .collection('article')
       .doc(id)
       .remove();
+  }
+
+  getArticleContent(articleId) {
+    return db
+      .collection('articleContent')
+      .where({ articleId })
+      .limit(1)
+      .get();
+  }
+
+  saveArticleContent(values) {
+    const { isAdd = false, _openid, success, ...resValues } = values;
+
+    if (isAdd) {
+      return db.collection('articleContent').add(resValues);
+    }
+    return db
+      .collection('articleContent')
+      .doc(id)
+      .update(resValues);
   }
 }
 
