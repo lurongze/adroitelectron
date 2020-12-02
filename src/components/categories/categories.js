@@ -99,10 +99,14 @@ function Categories(props) {
     }
   }
 
-  function hanldeClick(id) {
+  function hanldeClick(s) {
     timer && clearTimeout(timer);
     timer = setTimeout(() => {
-      setCurrentCate(id);
+      setCurrentCate(s._id);
+      dispatch({
+        type: 'global/selectCategory',
+        payload: s
+      })
     }, 200);
   }
 
@@ -217,7 +221,7 @@ function Categories(props) {
                 />
                 <div
                   className={styles.menuTitle}
-                  onClick={() => hanldeClick(s._id)}
+                  onClick={() => hanldeClick(s)}
                   onDoubleClick={() => hanldDbClick(s._id)}
                 >
                   {s.title}

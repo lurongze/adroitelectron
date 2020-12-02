@@ -18,55 +18,56 @@ let timer = null;
 function Articles(props) {
   const {
     dispatch,
-    articleModel: { notes = [] },
-    global: { currentNote = {} },
+    articleModel: { articles = [] },
+    global: { currentNote = {}, currentCategory = {} },
     loading,
   } = props;
 
-  const [showNotes, setShowNotes] = useState(true);
   const [eidtId, setEditId] = useState('');
   const [list, setList] = useState([]);
+  const [currentArticle, setCurrentArticle] = useState({});
 
-  function selectNote(data) {
-    dispatch({
-      type: 'global/selectNote',
-      payload: data,
-    });
-    setShowNotes(false);
+  function selectArticle(data) {
+    setCurrentArticle(data);
   }
 
-  function addNote() {
-    const emp = list.find(s => isEmpty(s.title));
-    if (!emp) {
-      const newId = `tmp${new Date().getTime()}`;
-      const resList = [
-        ...list,
-        {
-          _id: newId,
-          title: '',
-          sort: list[list.length - 1]?.sort || 50,
-          edit: true,
-        },
-      ];
-      setEditId(newId);
-      setList(resList);
+  function addArticle() {
+    if (isEmpty(currentCategory?._id) || isEmpty(currentNote?._id)) {
+      message.error('未选择笔记本或者分类！');
+    } else {
+      const emp = list.find(s => isEmpty(s.title));
+      if (!emp) {
+        const newId = `tmp${new Date().getTime()}`;
+        const resList = [
+          ...list,
+          {
+            _id: newId,
+            title: '',
+            cateId: currentCategory._id,
+            noteId: currentNote._id,
+            sort: list[list.length - 1]?.sort || 50,
+          },
+        ];
+        setEditId(newId);
+        setList(resList);
+      }
     }
   }
 
-  function removeNote(s) {
+  function removeArticle(s) {
     Modal.confirm({
-      title: '确认删除笔记吗？',
+      title: '确认删除文章吗？',
       okText: '删除',
       cancelText: '取消',
       onOk: () => {
         dispatch({
-          type: 'articleModel/deleteNote',
+          type: 'articleModel/deleteArticle',
           payload: {
             id: s._id,
             success: () => {
               message.success('删除成功！');
               dispatch({
-                type: 'articleModel/queryNotes',
+                type: 'articleModel/queryArticles',
               });
             },
           },
@@ -87,7 +88,10 @@ function Articles(props) {
           success: () => {
             message.success('保存成功！');
             dispatch({
-              type: 'articleModel/queryNotes',
+              type: 'articleModel/queryArticles',
+              payload: {
+                cateId: currentCategory._id,
+              },
             });
           },
         },
@@ -103,28 +107,29 @@ function Articles(props) {
   function handleClick(s) {
     timer && clearTimeout(timer);
     timer = setTimeout(() => {
-      selectNote(s);
+      selectArticle(s);
     }, 200);
   }
 
   function hanldDbClick(id) {
     timer && clearTimeout(timer);
-    console.log('hanldDbClick');
     setEditId(id);
   }
 
   useEffect(() => {
-    dispatch({
-      type: 'articleModel/queryNotes',
-    });
-  }, []);
+    if (!isEmpty(currentCategory?._id)) {
+      dispatch({
+        type: 'articleModel/queryArticles',
+        payload: {
+          cateId: currentCategory._id,
+        },
+      });
+    }
+  }, [currentCategory]);
 
   useEffect(() => {
-    if (notes.length) {
-      setList(notes);
-      selectNote(notes[0]);
-    }
-  }, [notes]);
+    setList(articles);
+  }, [articles]);
 
   function menu(s) {
     return (
@@ -141,7 +146,7 @@ function Articles(props) {
           className={styles.popverItem}
           key="2"
           onClick={() => {
-            removeNote(s);
+            removeArticle(s);
           }}
         >
           <DeleteOutlined />
@@ -156,7 +161,7 @@ function Articles(props) {
       <div className={classnames(styles.menuItem, styles.absoluteItem)}>
         <div
           onClick={() => {
-            addNote();
+            addArticle();
           }}
           className={styles.menuTitle}
         >
@@ -164,38 +169,40 @@ function Articles(props) {
           新增文章
         </div>
       </div>
-      {list.map(s => (
-        <div
-          key={s._id}
-          className={classnames(styles.menuItem, {
-            [styles.current]: s._id === currentNote._id,
-          })}
-          title={s.title}
-        >
-          {eidtId === s._id ? (
-            <div className={styles.menuTitle}>
-              <Input
-                defaultValue={s.title}
-                autoFocus
-                onBlur={() => handleBlur()}
-                onPressEnter={e => saveArticle(e, s)}
-              />
-            </div>
-          ) : (
-            <div
-              className={styles.menuTitle}
-              onClick={() => handleClick(s)}
-              onDoubleClick={() => hanldDbClick(s._id)}
-            >
-              <BookOutlined style={{ margin: '0 5px' }} />
-              {s.title}
-            </div>
-          )}
-          <Popover placement="rightBottom" content={menu(s)} trigger="hover">
-            <MoreOutlined className={styles.menuIcon} />
-          </Popover>
-        </div>
-      ))}
+      <Spin spinning={loading}>
+        {list.map(s => (
+          <div
+            key={s._id}
+            className={classnames(styles.menuItem, {
+              [styles.current]: s._id === currentArticle._id,
+            })}
+            title={s.title}
+          >
+            {eidtId === s._id ? (
+              <div className={styles.menuTitle}>
+                <Input
+                  defaultValue={s.title}
+                  autoFocus
+                  onBlur={() => handleBlur()}
+                  onPressEnter={e => saveArticle(e, s)}
+                />
+              </div>
+            ) : (
+              <div
+                className={styles.menuTitle}
+                onClick={() => handleClick(s)}
+                onDoubleClick={() => hanldDbClick(s._id)}
+              >
+                <BookOutlined style={{ margin: '0 5px' }} />
+                {s.title}
+              </div>
+            )}
+            <Popover placement="rightBottom" content={menu(s)} trigger="hover">
+              <MoreOutlined className={styles.menuIcon} />
+            </Popover>
+          </div>
+        ))}
+      </Spin>
     </div>
   );
 }

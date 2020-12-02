@@ -161,10 +161,10 @@ class cloudFunc {
       .remove();
   }
 
-  queryArticles(cateId) {
+  queryArticles(params) {
     return db
-      .collection('articles')
-      .where({ cateId })
+      .collection('article')
+      .where(params)
       .orderBy('sort', 'asc')
       .limit(100)
       .get();
@@ -178,17 +178,17 @@ class cloudFunc {
     }
 
     if (id === '') {
-      return db.collection('articles').add(resValues);
+      return db.collection('article').add(resValues);
     }
     return db
-      .collection('articles')
+      .collection('article')
       .doc(id)
       .update(resValues);
   }
 
   deleteArticles(id) {
     return db
-      .collection('articles')
+      .collection('article')
       .doc(id)
       .remove();
   }

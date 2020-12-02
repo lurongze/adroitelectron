@@ -5,6 +5,7 @@ const GlobalModel = {
   state: {
     showNav: true,
     currentNote: {},
+    currentCategory: {},
   },
   effects: {
     *query({ payload }, { call, put }) {},
@@ -22,6 +23,12 @@ const GlobalModel = {
         currentNote: action.payload,
       };
     },
+    selectCategory(state, action){
+      return {
+        ...state,
+        currentCategory: action.payload,
+      };
+    }
   },
 };
 export default GlobalModel;

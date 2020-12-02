@@ -14,15 +14,53 @@
   }
 }
 
-.categories {
+.colNav {
   width: 256px;
   height: 100vh;
+  position: relative;
   overflow: hidden;
-  transition: width 0.2s ease-in-out;
-  &.hide {
-    width: 0;
+  .noteTitle {
+    width: 256px;
+    height: 40px;
+    line-height: 40px;
+    background-color: rgb(39, 41, 45);
+    text-align: left;
+    box-sizing: border-box;
+    padding: 0 10px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    color: white;
+    cursor: pointer;
+  }
+  .moveNav {
+    position: absolute;
+    top: 40px;
+    transition: left .2s ease-in-out;
+    &.cateNav {
+      left: 256px;
+      &.show {
+        left: 0;
+      }
+    }
+    &.noteNav {
+      left: -256px;
+      &.show {
+        left: 0;
+      }
+    }
   }
 }
+
+// .categories {
+//   width: 256px;
+//   height: 100vh;
+//   overflow: hidden;
+//   transition: width 0.2s ease-in-out;
+//   &.hide {
+//     width: 0;
+//   }
+// }
 .loginForm {
   display: flex;
   width: 100vw;
