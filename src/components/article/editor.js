@@ -18,10 +18,15 @@ import {
 } from 'antd';
 import { connect } from 'umi';
 import classnames from 'classnames';
+import {
+  FundViewOutlined,
+  PictureOutlined,
+  SaveOutlined,
+} from '@ant-design/icons';
 import { isFuncAndRun, isEmpty } from '@/utils/helper';
 import Editor from '@monaco-editor/react';
+import Picture from './picture';
 import styles from './index.less';
-import { FundViewOutlined, PictureOutlined, SaveOutlined } from '@ant-design/icons';
 
 const languageList = ['markdown', 'javascript'];
 
@@ -42,13 +47,13 @@ function EditorItem(props) {
       type: 'articleModel/saveArticleContent',
       payload: {
         articleId: currentArticle._id,
-        content: editorRef.current()||'',
-        success(){
+        content: editorRef.current() || '',
+        success() {
           message.info('保存成功！');
           isFuncAndRun(onSaveSuccess);
-        }
-      }
-    })
+        },
+      },
+    });
   }
 
   function getContent(articleId) {
@@ -79,9 +84,8 @@ function EditorItem(props) {
       <Editor
         height="calc(100vh - 50px)"
         className={styles.editorItem}
-        value={articleContent?.content||''}
+        value={articleContent?.content || ''}
         loading={loading}
-        language={language}
         editorDidMount={e => {
           setIsEditorReady(true);
           editorRef.current = e;
@@ -104,20 +108,22 @@ function EditorItem(props) {
           disabled={!isEditorReady}
           className={styles.buttons}
           type="primary"
-          onClick={()=>isFuncAndRun(onSaveSuccess)}
+          onClick={() => isFuncAndRun(onSaveSuccess)}
         >
           <FundViewOutlined />
           查看文章
         </Button>
 
-        <Button
-          disabled={!isEditorReady}
-          className={styles.buttons}
-          type="primary"
-        >
-          <PictureOutlined />
-          图片上传
-        </Button>
+        <Picture>
+          <Button
+            disabled={!isEditorReady}
+            className={styles.buttons}
+            type="primary"
+          >
+            <PictureOutlined />
+            图片上传
+          </Button>
+        </Picture>
         <Dropdown.Button
           className={styles.buttons}
           trigger={['click']}

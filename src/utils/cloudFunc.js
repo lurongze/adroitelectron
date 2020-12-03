@@ -12,15 +12,15 @@ import { isFuncAndRun } from '@/utils/helper';
 //   console.log('loginState.isAnonymousAuth', loginState.isAnonymousAuth); // true
 // }
 
-function getQueryString(name) { 
-  var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i"); 
-  var r = window.location.search.substr(1).match(reg); 
-  if (r != null) return unescape(r[2]); 
-  return null; 
+function getQueryString(name) {
+  var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+  var r = window.location.search.substr(1).match(reg);
+  if (r != null) return unescape(r[2]);
+  return null;
 }
 
-const envId =  getQueryString('env') || 'wt-share-43bafa'; // 'wt-share-43bafa';
-if(!envId){
+const envId = getQueryString('env') || 'wt-share-43bafa'; // 'wt-share-43bafa';
+if (!envId) {
   alert('链接错误！');
 }
 let app = null; // 得放到外面才行
@@ -107,6 +107,56 @@ class cloudFunc {
       // this.setButtonStatus(false)
       isFuncAndRun(callBack);
     }
+  }
+
+  uploadPicture(cloudPath, filePath) {
+    return app.uploadFile({
+      cloudPath,
+      filePath,
+      // 云存储的路径
+      // cloudPath: 'dirname/filename',
+      // 需要上传的文件，File 类型
+      // filePath: document.getElementById('file').files[0],
+    });
+    // .then(res => {
+    //   // 返回文件 ID
+    //   console.log(res.fileID);
+    // });
+  }
+
+  getPictureURL(fileID) {
+    return app
+      .getTempFileURL({
+        fileList: [fileID],
+      })
+      .then(res => {
+        if (res?.fileList && res.fileList.length) {
+          const resItem = res.fileList[0];
+          if (resItem.code === 'SUCCESS') {
+            return { url: resItem.download_url, fileID: resItem.fileID };
+          }
+        }
+        return { url: '', fileID: '' };
+        // res.fileList.forEach(el => {
+        //   if (el.code === 'SUCCESS') {
+        //     console.log(el.tempFileURL);
+        //   } else {
+        //     //获取下载链接失败
+        //   }
+        // });
+      });
+  }
+
+  savePicture(values) {
+    return db.collection('pictures').add({ ...values, uploadTime: new Date() });
+  }
+
+  queryPicture(values) {
+    return db
+      .collection('pictures')
+      .orderBy('uploadTime', 'desc')
+      .limit(100)
+      .get();
   }
 
   queryNotes() {
@@ -207,17 +257,17 @@ class cloudFunc {
   getArticleContent(values) {
     return db
       .collection('articleContent')
-      .where(values )
+      .where(values)
       .limit(1)
       .get();
   }
 
-  addArticleContent(values){
+  addArticleContent(values) {
     return db.collection('articleContent').add(values);
   }
 
   updateArticleContent(values) {
-    const { articleId,content } = values;
+    const { articleId, content } = values;
     return db
       .collection('articleContent')
       .where({ articleId })

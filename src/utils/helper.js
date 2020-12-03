@@ -1,13 +1,15 @@
 // 需要插入父节点id，pid为null或''，就是找root节点，然后root节点再去找自己的子节点
-export function array2Tree(data, pid, level=0) {
+import dayjs from 'dayjs';
+
+export function array2Tree(data, pid, level = 0) {
   let res = [];
   data.forEach(item => {
     if (item.parentId === pid) {
-      let itemChildren = array2Tree(data, item._id, level+1);
+      let itemChildren = array2Tree(data, item._id, level + 1);
       if (itemChildren.length) {
         item.children = itemChildren;
       }
-      res.push({...item, level});
+      res.push({ ...item, level });
     }
   });
   return res;
@@ -32,6 +34,17 @@ export function isFuncAndRun(func, ...params) {
 
 export function log(...params) {
   console.log(...params);
+}
+
+export function getExtens(file) {
+  const tmp = file.split('.');
+  return tmp[tmp.length - 1];
+}
+
+export function createPictureUrl(file) {
+  const name = file.name;
+  const ext = getExtens(name);
+  return `${dayjs().format('YYYYMMDDHHmmss')}.${ext}`;
 }
 
 export function getTreeList() {
