@@ -5,6 +5,7 @@ import MainBar from '@/components/mainBar/mainBar';
 import Categories from '@/components/categories/categories';
 import NoteList from '@/components/note/note';
 import Articles from '@/components/article/articles';
+import ArticleArea from '@/components/article/articleArea';
 import { connect } from 'umi';
 import cloudFunc from '@/utils/cloudFunc';
 import Login from './login';
@@ -73,6 +74,7 @@ function Index(props) {
       >
         <Articles />
       </div>
+      <ArticleArea />
     </div>
   );
 }

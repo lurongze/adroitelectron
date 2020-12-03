@@ -25,10 +25,8 @@ function Articles(props) {
 
   const [eidtId, setEditId] = useState('');
   const [list, setList] = useState([]);
-  // const [currentArticle, setCurrentArticle] = useState({});
 
   function selectArticle(data) {
-    // setCurrentArticle(data);
     dispatch({
       type: 'global/selectArticle',
       payload: data,
@@ -72,6 +70,9 @@ function Articles(props) {
               message.success('删除成功！');
               dispatch({
                 type: 'articleModel/queryArticles',
+                payload: {
+                  cateId: currentCategory._id,
+                },
               });
             },
           },
@@ -121,9 +122,7 @@ function Articles(props) {
   }
 
   useEffect(() => {
-    console.log('currentCategory', currentCategory);
     if (!isEmpty(currentCategory?._id)) {
-      console.log('currentCategory', currentCategory);
       dispatch({
         type: 'articleModel/queryArticles',
         payload: {
@@ -221,5 +220,8 @@ function Articles(props) {
 export default connect(({ global, articleModel, loading }) => ({
   global,
   articleModel,
-  loading: loading.models.articleModel,
+  loading:
+    loading.effects['articleModel/deleteArticle'] ||
+    loading.effects['articleModel/queryArticles'] ||
+    loading.effects['articleModel/saveArticle'],
 }))(Articles);

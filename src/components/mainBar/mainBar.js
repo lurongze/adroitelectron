@@ -1,93 +1,41 @@
-import React, { useEffect, useState } from 'react';
-import { Tooltip } from 'antd';
+import React from 'react';
 import { isFuncAndRun } from '@/utils/helper';
-import { Menu, message, Modal } from 'antd';
+import { Modal } from 'antd';
 import { connect } from 'umi';
-import {
-  HomeFilled,
-  BookFilled,
-  FolderAddFilled,
-  LogoutOutlined,
-} from '@ant-design/icons';
-import Notes from './notes';
+import { HomeFilled, LogoutOutlined } from '@ant-design/icons';
 import styles from './mainBar.less';
 
-const { SubMenu } = Menu;
-
 function MainBar(props) {
-  const {
-    dispatch,
-    onSignOut,
-    noteModel: { notes = [] },
-    global: { currentNote = '' },
-  } = props;
-  const [openKeys, setOpenKeys] = useState([]);
-  const [visible, setVisible] = useState(false);
-
+  const { dispatch, onSignOut } = props;
   return (
-    <>
-      <Menu
-        mode="inline"
-        theme="dark"
-        selectedKeys={[currentNote?._id || '']}
-        openKeys={openKeys}
-        inlineCollapsed={true}
-        style={{ width: '60px', height: '100vh' }}
+    <div className={styles.mainBar}>
+      <div
+        className={styles.mainBarItem}
+        onClick={() => {
+          dispatch({
+            type: 'global/toggleNav',
+          });
+        }}
       >
-        <Menu.Item
-          key="1"
-          onClick={() => {
-            setOpenKeys([]);
-            dispatch({
-              type: 'global/toggleNav',
-            });
-          }}
-          title={null}
-        >
-          <HomeFilled style={{ color: 'goldenrod' }} />
-        </Menu.Item>
-        {/* <Menu.Item
-          key="3"
-          title="新增笔记"
-          onClick={() => {
-            setOpenKeys([]);
-            setVisible(true);
-          }}
-        >
-          <FolderAddFilled />
-        </Menu.Item> */}
-        <Menu.Item
-          key="4"
-          title="退出登录"
-          onClick={() => {
-            Modal.confirm({
-              title: '确认退出登录吗？',
-              okText: '退出',
-              cancelText: '取消',
-              onOk: () => {
-                isFuncAndRun(onSignOut);
-              },
-            });
-          }}
-        >
-          <LogoutOutlined />
-        </Menu.Item>
-      </Menu>
-      <Modal
-        closable={false}
-        footer={null}
-        visible={visible}
-        destroyOnClose
-        onCancel={() => setVisible(false)}
+        <HomeFilled style={{ color: '#1890ff' }} />
+      </div>
+      <div
+        className={styles.mainBarItem}
+        title="退出登录"
+        onClick={() => {
+          Modal.confirm({
+            title: '确认退出登录吗？',
+            okText: '退出',
+            cancelText: '取消',
+            onOk: () => {
+              isFuncAndRun(onSignOut);
+            },
+          });
+        }}
       >
-        <Notes
-          onSuccess={() => {
-            setVisible(false);
-          }}
-          onCancel={() => setVisible(false)}
-        />
-      </Modal>
-    </>
+        <LogoutOutlined />
+      </div>
+    </div>
   );
 }
 

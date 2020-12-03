@@ -8,20 +8,23 @@
   overflow: hidden;
   .mainBar {
     display: flex;
-    width: 60px;
+    // width: 60px;
+    flex: 0 0 60px;
     height: 100vh;
     background-color: rgb(39, 41, 45);
   }
 }
 
 .colNav {
-  width: 256px;
+  // width: 256px;
+  flex: 0 0 256px;
   height: 100vh;
   position: relative;
   overflow: hidden;
-  transition: width 0.2s ease-in-out;
+  transition: flex 0.2s ease-in-out;
   &.hide {
-    width: 0;
+    // width: 0;
+    flex: 0 0 0;
     overflow: hidden;
   }
   .noteTitle {
@@ -57,15 +60,6 @@
   }
 }
 
-// .categories {
-//   width: 256px;
-//   height: 100vh;
-//   overflow: hidden;
-//   transition: width 0.2s ease-in-out;
-//   &.hide {
-//     width: 0;
-//   }
-// }
 .loginForm {
   display: flex;
   width: 100vw;
@@ -88,25 +82,9 @@
     margin: 15px;
   }
 }
+
 .title {
   background: rgb(121, 242, 157);
 }
 
-::-webkit-scrollbar {
-  /*滚动条整体样式*/
-  width: 2px; /*高宽分别对应横竖滚动条的尺寸*/
-  height: 5px;
-}
-::-webkit-scrollbar-thumb {
-  /*滚动条里面小方块*/
-  border-radius: 1px;
-  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
-  // background: #535353;
-  background: rgba(0, 0, 0, 0.2);
-}
-::-webkit-scrollbar-track {
-  /*滚动条里面轨道*/
-  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
-  border-radius: 10px;
-  background: #ededed;
-}
+

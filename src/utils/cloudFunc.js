@@ -11,7 +11,18 @@ import { isFuncAndRun } from '@/utils/helper';
 //   const loginState = await auth.getLoginState();
 //   console.log('loginState.isAnonymousAuth', loginState.isAnonymousAuth); // true
 // }
-const envId = 'wt-share-43bafa';
+
+function getQueryString(name) { 
+  var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i"); 
+  var r = window.location.search.substr(1).match(reg); 
+  if (r != null) return unescape(r[2]); 
+  return null; 
+}
+
+const envId =  getQueryString('env') || 'wt-share-43bafa'; // 'wt-share-43bafa';
+if(!envId){
+  alert('链接错误！');
+}
 let app = null; // 得放到外面才行
 let db = null;
 let auth = null;
@@ -193,24 +204,26 @@ class cloudFunc {
       .remove();
   }
 
-  getArticleContent(articleId) {
+  getArticleContent(values) {
     return db
       .collection('articleContent')
-      .where({ articleId })
+      .where(values )
       .limit(1)
       .get();
   }
 
-  saveArticleContent(values) {
-    const { isAdd = false, _openid, success, ...resValues } = values;
+  addArticleContent(values){
+    return db.collection('articleContent').add(values);
+  }
 
-    if (isAdd) {
-      return db.collection('articleContent').add(resValues);
-    }
+  updateArticleContent(values) {
+    const { articleId,content } = values;
     return db
       .collection('articleContent')
-      .doc(id)
-      .update(resValues);
+      .where({ articleId })
+      .update({
+        content,
+      });
   }
 }
 

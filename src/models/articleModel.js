@@ -7,6 +7,7 @@ const ArticleModel = {
   namespace: 'articleModel',
   state: {
     articles: [],
+    articleContent: {},
   },
   effects: {
     *query({ payload }, { call, put }) {},
@@ -30,17 +31,54 @@ const ArticleModel = {
     *saveArticle({ payload }, { call, put }) {
       const res = yield call(cloudFunc.saveArticle, payload);
       if ((res?.updated && +res.updated !== 0) || !isEmpty(res?.id)) {
+        if (!isEmpty(res?.id)) {
+          yield call(cloudFunc.addArticleContent, {
+            articleId: res.id,
+            content: '',
+          });
+        }
         isFuncAndRun(payload?.success);
       } else {
         message.error('保存失败！');
       }
     },
-    *getArticle({ payload }, { call, put }) {
-      const res = yield call(cloudFunc.getArticle, payload);
+    *getArticleContent({ payload }, { call, put }) {
+      const res = yield call(cloudFunc.getArticleContent, payload);
+      const resData = res?.data || [];
+      let resContent = {};
+      if (resData.length) {
+        resContent = resData[0];
+      } else {
+        resContent = {
+          isAdd: true,
+          articleId: payload.articleId,
+          content: '## 请输入你的文章标题',
+        };
+      }
+      yield put({
+        type: 'saveContent',
+        payload: {
+          articleContent: resContent,
+        },
+      });
+    },
+    *saveArticleContent({ payload }, { call, put }) {
+      const res = yield call(cloudFunc.updateArticleContent, payload);
+      if ((res?.updated && +res.updated !== 0) || !isEmpty(res?.id)) {
+        isFuncAndRun(payload?.success);
+      } else {
+        message.error('保存失败！');
+      }
     },
   },
   reducers: {
     save(state, action) {
+      return {
+        ...state,
+        ...action.payload,
+      };
+    },
+    saveContent(state, action) {
       return {
         ...state,
         ...action.payload,
