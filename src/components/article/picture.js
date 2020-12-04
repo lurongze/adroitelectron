@@ -1,5 +1,5 @@
 import React, { useState, useEffect, cloneElement } from 'react';
-import { Button, Drawer, message, Upload } from 'antd';
+import { Button, Drawer, message, Upload, Tooltip } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { createPictureUrl } from '@/utils/helper';
 import cloudFunc from '@/utils/cloudFunc';
@@ -53,6 +53,16 @@ function Picture(props) {
     });
   }, []);
 
+  function renderTitle(s) {
+    return (
+      <>
+        <div className={styles.toopTitleItem}>查看原图</div>
+        <div className={styles.toopTitleItem}>复制Markdown链接</div>
+        <div className={styles.toopTitleItem}>删除</div>
+      </>
+    );
+  }
+
   return (
     <>
       {cloneElement(children, {
@@ -70,7 +80,9 @@ function Picture(props) {
       >
         <div className={styles.pictureBlock}>
           {list.map(s => (
-            <img className={styles.pictureItem} src={s.url} />
+            <Tooltip key={s.url} title={renderTitle(s)}>
+              <img className={styles.pictureItem} src={s.url} />
+            </Tooltip>
           ))}
         </div>
 
