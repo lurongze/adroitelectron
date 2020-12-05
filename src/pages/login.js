@@ -119,8 +119,8 @@ function Login(props) {
           name="loginForm"
           initialValues={{
             remember: true,
-            email: '1946755280@qq.com',
-            password: 'SA523BER',
+            email: '',
+            password: '',
           }}
           onFinish={onLogin}
         >
@@ -185,7 +185,7 @@ function Login(props) {
           name="resetPasswordForm"
           initialValues={{
             remember: true,
-            email: '1946755280@qq.com',
+            email: '',
           }}
           onFinish={onResetPassword}
         >
@@ -227,9 +227,9 @@ function Login(props) {
           name="registerForm"
           initialValues={{
             remember: true,
-            email: '1946755280@qq.com',
-            confirmPassword: 'SA523BER',
-            password: 'SA523BER',
+            email: '',
+            confirmPassword: '',
+            password: '',
           }}
           onFinish={onRegister}
         >

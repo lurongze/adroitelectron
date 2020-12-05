@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { isFuncAndRun, isEmpty } from '@/utils/helper';
-import { Input, message, Modal, Popover, Spin } from 'antd';
+import { Input, message, Modal, Popover, Tooltip, Spin } from 'antd';
 import { connect } from 'umi';
 import classnames from 'classnames';
 import {
@@ -125,28 +125,23 @@ function Note(props) {
     }
   }, [notes]);
 
-  function menu(s) {
+  function renderTitle(s) {
     return (
-      <div className={styles.popverContainer}>
-        <div
-          className={styles.popverItem}
-          key="1"
-          onClick={() => setEditId(s._id)}
-        >
+      <>
+        <div onClick={() => setEditId(s._id)} className="toopTitleItem">
           <EditOutlined />
           编辑
         </div>
         <div
-          className={styles.popverItem}
-          key="2"
           onClick={() => {
             removeNote(s);
           }}
+          className="toopTitleItem"
         >
           <DeleteOutlined />
           删除
         </div>
-      </div>
+      </>
     );
   }
 
@@ -191,53 +186,11 @@ function Note(props) {
                 {s.title}
               </div>
             )}
-            <Popover placement="rightBottom" content={menu(s)} trigger="hover">
+            <Tooltip placement="right" title={renderTitle(s)}>
               <MoreOutlined className={styles.menuIcon} />
-            </Popover>
+            </Tooltip>
           </div>
         ))}
-        {/* {Array.from(new Array(100).keys()).map(() => {
-          return (
-            <>
-              {list.map(s => (
-                <div
-                  key={s._id}
-                  className={classnames(styles.menuItem, {
-                    [styles.current]: s._id === currentNote._id,
-                  })}
-                  title={s.title}
-                >
-                  {eidtId === s._id ? (
-                    <div className={styles.menuTitle}>
-                      <Input
-                        defaultValue={s.title}
-                        autoFocus
-                        onBlur={() => handleBlur()}
-                        onPressEnter={e => saveNote(e, s)}
-                      />
-                    </div>
-                  ) : (
-                    <div
-                      className={styles.menuTitle}
-                      onClick={() => handleClick(s)}
-                      onDoubleClick={() => hanldDbClick(s._id)}
-                    >
-                      <BookOutlined style={{ margin: '0 5px' }} />
-                      {s.title}
-                    </div>
-                  )}
-                  <Popover
-                    placement="rightBottom"
-                    content={menu(s)}
-                    trigger="hover"
-                  >
-                    <MoreOutlined className={styles.menuIcon} />
-                  </Popover>
-                </div>
-              ))}
-            </>
-          );
-        })} */}
       </div>
     </Spin>
   );

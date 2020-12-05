@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { isFuncAndRun, isEmpty } from '@/utils/helper';
-import { Input, message, Modal, Popover, Spin } from 'antd';
+import { Input, message, Modal, Popover, Tooltip, Spin } from 'antd';
 import { connect } from 'umi';
 import classnames from 'classnames';
 import {
@@ -136,20 +136,15 @@ function Articles(props) {
     setList(articles);
   }, [articles]);
 
-  function menu(s) {
+  function renderTitle(s) {
     return (
-      <div className={styles.popverContainer}>
-        <div
-          className={styles.popverItem}
-          key="1"
-          onClick={() => setEditId(s._id)}
-        >
+      <>
+        <div className="toopTitleItem" onClick={() => setEditId(s._id)}>
           <EditOutlined />
           编辑
         </div>
         <div
-          className={styles.popverItem}
-          key="2"
+          className="toopTitleItem"
           onClick={() => {
             removeArticle(s);
           }}
@@ -157,7 +152,7 @@ function Articles(props) {
           <DeleteOutlined />
           删除
         </div>
-      </div>
+      </>
     );
   }
 
@@ -202,9 +197,9 @@ function Articles(props) {
                 {s.title}
               </div>
             )}
-            <Popover placement="rightBottom" content={menu(s)} trigger="hover">
+            <Tooltip placement="right" title={renderTitle(s)}>
               <MoreOutlined className={styles.menuIcon} />
-            </Popover>
+            </Tooltip>
           </div>
         ))}
         {list.length === 0 && (

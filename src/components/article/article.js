@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { createElement, useEffect } from 'react';
 import { Button, Empty } from 'antd';
 import { connect } from 'umi';
 import classnames from 'classnames';
@@ -8,6 +8,7 @@ import gfm from 'remark-gfm';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { atomDark as theme } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { EditOutlined, LoadingOutlined } from '@ant-design/icons';
+import Dir from '@/components/article/dir';
 import 'github-markdown-css/github-markdown.css';
 import styles from './index.less';
 
@@ -39,18 +40,29 @@ function Article(props) {
         <SyntaxHighlighter style={theme} language={language} children={value} />
       );
     },
+    heading: ({ level, children }) => {
+      return createElement(
+        `h${level}`,
+        { id: children[0]?.props?.value || '' },
+        children,
+      );
+    },
   };
 
   return (
     <div className={classnames(styles.articleContentContainer)}>
       <div className={styles.markdownContent}>
         {!isEmpty(articleContent?.content) && (
-          <ReactMarkdown
-            className="markdown-body"
-            renderers={renderers}
-            plugins={[gfm]}
-            children={articleContent?.content || ''}
-          />
+          <>
+            <ReactMarkdown
+              className="markdown-body"
+              allowDangerousHtml
+              renderers={renderers}
+              plugins={[gfm]}
+              children={articleContent?.content || ''}
+            />
+            <Dir content={articleContent?.content || ''} />
+          </>
         )}
         {loading && (
           <Empty

@@ -1,8 +1,9 @@
 import React, { useState, useEffect, cloneElement } from 'react';
-import { Button, Drawer, message, Upload, Tooltip } from 'antd';
+import { Button, Drawer, message, Upload, Tooltip, Spin } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { createPictureUrl } from '@/utils/helper';
 import cloudFunc from '@/utils/cloudFunc';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 import ImgCrop from 'antd-img-crop';
 import classnames from 'classnames';
 
@@ -10,14 +11,24 @@ import styles from './index.less';
 
 function Picture(props) {
   const { dispatch, children } = props;
-  const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [list, setList] = useState([]);
+
+  function deletePicture(s) {
+    setLoading(true);
+    Promise.all([
+      cloudFunc.deleteFile(s.fileID),
+      cloudFunc.deletePicture(s._id),
+    ]).then(() => {
+      setLoading(false);
+      setList(list.filter(ss => ss._id !== s._id));
+    });
+  }
 
   const uploadProps = {
     name: 'file',
     beforeUpload: file => {
-      console.log('beforeUpload', file);
       setLoading(true);
       const cloudPath = createPictureUrl(file);
       cloudFunc
@@ -48,7 +59,6 @@ function Picture(props) {
 
   useEffect(() => {
     cloudFunc.queryPicture().then(res => {
-      console.log('res', res);
       setList(res.data);
     });
   }, []);
@@ -56,9 +66,24 @@ function Picture(props) {
   function renderTitle(s) {
     return (
       <>
-        <div className={styles.toopTitleItem}>查看原图</div>
-        <div className={styles.toopTitleItem}>复制Markdown链接</div>
-        <div className={styles.toopTitleItem}>删除</div>
+        <div
+          onClick={() => {
+            window.open(s.url);
+          }}
+          className="toopTitleItem"
+        >
+          查看原图
+        </div>
+        <CopyToClipboard
+          text={`![alt 属性文本](${s.url})`}
+          onCopy={() => message.success('复制成功！')}
+        >
+          <div className="toopTitleItem">复制Markdown链接</div>
+        </CopyToClipboard>
+
+        <div onClick={() => deletePicture(s)} className="toopTitleItem">
+          删除
+        </div>
       </>
     );
   }
@@ -78,13 +103,15 @@ function Picture(props) {
         onClose={() => setVisible(false)}
         bodyStyle={{ padding: 0 }}
       >
-        <div className={styles.pictureBlock}>
-          {list.map(s => (
-            <Tooltip key={s.url} title={renderTitle(s)}>
-              <img className={styles.pictureItem} src={s.url} />
-            </Tooltip>
-          ))}
-        </div>
+        <Spin spinning={loading}>
+          <div className={styles.pictureBlock}>
+            {list.map(s => (
+              <Tooltip key={s._id} title={renderTitle(s)}>
+                <img className={styles.pictureItem} src={s.url} />
+              </Tooltip>
+            ))}
+          </div>
+        </Spin>
 
         <div className={styles.footer}>
           <ImgCrop
@@ -113,9 +140,9 @@ function Picture(props) {
               原图上传
             </Button>
           </Upload>
-          <Button className={styles.button}>取消</Button>
-          <Button className={styles.button}>上一页</Button>
-          <Button className={styles.button}>下一页</Button>
+          <Button onClick={() => setVisible(false)} className={styles.button}>
+            取消
+          </Button>
         </div>
       </Drawer>
     </>

@@ -83,9 +83,9 @@ function EditorItem(props) {
     <div className={classnames(styles.editorContainer)}>
       <Editor
         height="calc(100vh - 50px)"
+        language={language}
         className={styles.editorItem}
         value={articleContent?.content || ''}
-        loading={loading}
         editorDidMount={e => {
           setIsEditorReady(true);
           editorRef.current = e;

@@ -3,7 +3,7 @@ import Editor from '@/components/article/editor';
 import Article from '@/components/article/article';
 
 function ArticleArea(props) {
-  const [viewContent, setViewContent] = useState(false);
+  const [viewContent, setViewContent] = useState(true);
 
   return viewContent ? (
     <Article

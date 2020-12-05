@@ -76,11 +76,32 @@
     margin: 0 10px;
   }
 }
-.toopTitleItem{
-  width: 100%;
-  box-sizing: border-box;
-  padding: 2px 5px;
-  &:hover{
-    color: blueviolet;
+
+.dirFixed {
+  position: fixed;
+  top: 50vh;
+  transform: translateY(-50%);
+  right: 10px;
+  // border: 1px solid #e5e5e5;
+  background-color: white;
+  display: flex;
+  flex-wrap: wrap;
+  width: 10vh;
+  box-shadow: 0 6px 16px -8px rgba(0, 0, 0, 0.08),
+    0 9px 28px 0 rgba(0, 0, 0, 0.05), 0 12px 48px 16px rgba(0, 0, 0, 0.03);
+  .dir {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 2px 5px;
+    cursor: pointer;
+    color: #24292e;
+    &:hover {
+      color: #1890ff;
+    }
+    .point {
+      font-size: 20px;
+      font-weight: bolder;
+      margin-right: 2px;
+    }
   }
 }

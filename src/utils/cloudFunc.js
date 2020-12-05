@@ -124,6 +124,12 @@ class cloudFunc {
     // });
   }
 
+  deleteFile(fileID) {
+    return app.deleteFile({
+      fileList: [fileID],
+    });
+  }
+
   getPictureURL(fileID) {
     return app
       .getTempFileURL({
@@ -151,11 +157,18 @@ class cloudFunc {
     return db.collection('pictures').add({ ...values, uploadTime: new Date() });
   }
 
+  deletePicture(id) {
+    return db
+      .collection('pictures')
+      .doc(id)
+      .remove();
+  }
+
   queryPicture(values) {
     return db
       .collection('pictures')
       .orderBy('uploadTime', 'desc')
-      .limit(100)
+      .limit(200)
       .get();
   }
 
