@@ -1,19 +1,16 @@
-import React, { useEffect, useState, Fragment } from 'react';
+import React, { useEffect, useState, Fragment, useRef } from 'react';
 import { Menu, message, Tooltip, Modal, Popover, Input, Spin } from 'antd';
 import { connect } from 'umi';
 import classnames from 'classnames';
 import { isFuncAndRun, isEmpty, array2Tree } from '@/utils/helper';
+import ChangeSort from '@/components/changeSort/changeSort';
 import {
   CaretDownOutlined,
-  CarOutlined,
   PlusOutlined,
   MoreOutlined,
   EditOutlined,
   DeleteOutlined,
 } from '@ant-design/icons';
-import NoteList from '../note/note';
-import Articles from '../article/articles';
-import ManageCategories from './manageCategories';
 import styles from './index.less';
 
 let timer = null;
@@ -24,10 +21,9 @@ function Categories(props) {
     global: { showNav, currentNote = {}, currentCategory = {} },
     categoriesModel: { categories = [] },
   } = props;
-  const [visible, setVisible] = useState(false);
+  const csRef = useRef(null);
   const [treeList, setTreeList] = useState([]);
   const [hideList, setHideList] = useState([]);
-  // const [currentCate, setCurrentCate] = useState('');
   const [storeList, setStoreList] = useState([]);
   const [editId, setEditId] = useState('');
 
@@ -36,7 +32,6 @@ function Categories(props) {
     const resStoreList = resList.map(s => ({ ...s, children: undefined }));
     setStoreList(resStoreList);
     setTreeList(resTree);
-    console.log('storeAndSetList', resStoreList, resTree);
   }
 
   function addRow(parentId = '') {
@@ -115,6 +110,12 @@ function Categories(props) {
     setEditId(id);
   }
 
+  function changeSort(s) {
+    if (csRef?.current) {
+      csRef.current.showModal(s);
+    }
+  }
+
   function removeCategory(s) {
     const { id, children = [] } = s;
     if (children.length) {
@@ -167,6 +168,10 @@ function Categories(props) {
           <PlusOutlined />
           新增下级
         </div>
+        <div className="toopTitleItem" onClick={() => changeSort(s)}>
+          <PlusOutlined />
+          修改排序
+        </div>
         <div className="toopTitleItem" onClick={() => removeCategory(s)}>
           <DeleteOutlined />
           删除
@@ -187,7 +192,7 @@ function Categories(props) {
               [styles.current]:
                 currentCategory?._id && s._id === currentCategory._id,
             })}
-            title={s.title}
+            title={`[${s.sort}]${s.title}`}
           >
             {editId === s._id ? (
               <div className={styles.menuTitle}>
@@ -254,6 +259,24 @@ function Categories(props) {
           )}
         </Spin>
       </div>
+      <ChangeSort
+        ref={csRef}
+        onSave={values => {
+          dispatch({
+            type: 'categoriesModel/saveCategory',
+            payload: {
+              ...values,
+              success: () => {
+                message.success('保存成功！');
+                dispatch({
+                  type: 'categoriesModel/queryCategories',
+                  payload: currentNote._id,
+                });
+              },
+            },
+          });
+        }}
+      />
     </>
   );
 }

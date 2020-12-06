@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { isFuncAndRun, isEmpty } from '@/utils/helper';
 import { Input, message, Modal, Popover, Tooltip, Spin } from 'antd';
+import ChangeSort from '@/components/changeSort/changeSort';
 import { connect } from 'umi';
 import classnames from 'classnames';
 import {
@@ -22,7 +23,7 @@ function Articles(props) {
     global: { currentNote = {}, currentCategory = {}, currentArticle = {} },
     loading = false,
   } = props;
-
+  const csRef = useRef(null);
   const [eidtId, setEditId] = useState('');
   const [list, setList] = useState([]);
 
@@ -32,7 +33,11 @@ function Articles(props) {
       payload: data,
     });
   }
-
+  function changeSort(s) {
+    if (csRef?.current) {
+      csRef.current.showModal(s);
+    }
+  }
   function addArticle() {
     if (isEmpty(currentCategory?._id) || isEmpty(currentNote?._id)) {
       message.error('未选择笔记本或者分类！');
@@ -143,6 +148,10 @@ function Articles(props) {
           <EditOutlined />
           编辑
         </div>
+        <div onClick={() => changeSort(s)} className="toopTitleItem">
+          <EditOutlined />
+          修改排序
+        </div>
         <div
           className="toopTitleItem"
           onClick={() => {
@@ -176,7 +185,7 @@ function Articles(props) {
             className={classnames(styles.menuItem, {
               [styles.current]: s._id === currentArticle._id,
             })}
-            title={s.title}
+            title={`[${s.sort}]${s.title}`}
           >
             {eidtId === s._id ? (
               <div className={styles.menuTitle}>
@@ -208,6 +217,26 @@ function Articles(props) {
           </div>
         )}
       </Spin>
+      <ChangeSort
+        ref={csRef}
+        onSave={values => {
+          dispatch({
+            type: 'articleModel/saveArticle',
+            payload: {
+              ...values,
+              success: () => {
+                message.success('保存成功！');
+                dispatch({
+                  type: 'articleModel/queryArticles',
+                  payload: {
+                    cateId: currentCategory._id,
+                  },
+                });
+              },
+            },
+          });
+        }}
+      />
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import cloudbase from '@cloudbase/js-sdk';
-import { isFuncAndRun } from '@/utils/helper';
+import { isFuncAndRun, array2Tree } from '@/utils/helper';
 // const app = cloudbase.init({
 //   env: 'wt-share-43bafa',
 // });
@@ -188,12 +188,12 @@ class cloudFunc {
     }
 
     if (id === '') {
-      return db.collection('notes').add(resValues);
+      return db.collection('notes').add({ ...resValues, addTime: new Date() });
     }
     return db
       .collection('notes')
       .doc(id)
-      .update(resValues);
+      .update({ ...resValues, updateTime: new Date() });
   }
 
   deleteNote(id) {
@@ -220,12 +220,14 @@ class cloudFunc {
     }
 
     if (id === '') {
-      return db.collection('categories').add(resValues);
+      return db
+        .collection('categories')
+        .add({ ...resValues, addTime: new Date() });
     }
     return db
       .collection('categories')
       .doc(id)
-      .update(resValues);
+      .update({ ...resValues, updateTime: new Date() });
   }
 
   deleteCategory(id) {
@@ -252,12 +254,14 @@ class cloudFunc {
     }
 
     if (id === '') {
-      return db.collection('article').add(resValues);
+      return db
+        .collection('article')
+        .add({ ...resValues, addTime: new Date() });
     }
     return db
       .collection('article')
       .doc(id)
-      .update(resValues);
+      .update({ ...resValues, updateTime: new Date() });
   }
 
   deleteArticles(id) {
@@ -276,7 +280,9 @@ class cloudFunc {
   }
 
   addArticleContent(values) {
-    return db.collection('articleContent').add(values);
+    return db
+      .collection('articleContent')
+      .add({ ...values, addTime: new Date() });
   }
 
   updateArticleContent(values) {
@@ -286,7 +292,34 @@ class cloudFunc {
       .where({ articleId })
       .update({
         content,
+        updateTime: new Date(),
       });
+  }
+
+  getNoteData(noteId, cb) {
+    const categoryPromise = db
+      .collection('categories')
+      .where({ noteId })
+      .orderBy('sort', 'asc')
+      .limit(1000)
+      .get();
+    const articlesPromise = db
+      .collection('article')
+      .where({ noteId })
+      .orderBy('sort', 'asc')
+      .limit(1000)
+      .get();
+    // console.log('noteData', [...categorys, ...articles]);
+    Promise.all([categoryPromise, articlesPromise]).then(res => {
+      const cateList = res[0]?.data || [];
+      const atList = (res[1]?.data || []).map(s => ({
+        ...s,
+        parentId: s.cateId,
+      }));
+      const resList = array2Tree([...cateList, ...atList], '');
+      console.log('noteData', [...cateList, ...atList]);
+      isFuncAndRun(cb, resList);
+    });
   }
 }
 

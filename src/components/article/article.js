@@ -19,6 +19,7 @@ function Article(props) {
     dispatch,
     loading,
     onClickEdit,
+    onlyView = false,
   } = props;
 
   function getContent(articleId) {
@@ -83,19 +84,21 @@ function Article(props) {
           />
         )}
       </div>
-      <div className={styles.footer}>
-        <Button
-          onClick={() => {
-            isFuncAndRun(onClickEdit);
-          }}
-          loading={loading}
-          className={styles.buttons}
-          type="primary"
-        >
-          <EditOutlined />
-          编辑文章
-        </Button>
-      </div>
+      {!onlyView && (
+        <div className={styles.footer}>
+          <Button
+            onClick={() => {
+              isFuncAndRun(onClickEdit);
+            }}
+            loading={loading}
+            className={styles.buttons}
+            type="primary"
+          >
+            <EditOutlined />
+            编辑文章
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

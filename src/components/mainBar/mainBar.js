@@ -7,6 +7,7 @@ import styles from './mainBar.less';
 
 function MainBar(props) {
   const { dispatch, onSignOut } = props;
+
   return (
     <div className={styles.mainBar}>
       <div

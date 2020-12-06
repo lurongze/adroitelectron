@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { isFuncAndRun, isEmpty } from '@/utils/helper';
 import { Input, message, Modal, Popover, Tooltip, Spin } from 'antd';
+import ChangeSort from '@/components/changeSort/changeSort';
 import { connect } from 'umi';
 import classnames from 'classnames';
 import {
@@ -22,7 +23,7 @@ function Note(props) {
     global: { currentNote = {} },
     loading,
   } = props;
-
+  const csRef = useRef(null);
   const [showNotes, setShowNotes] = useState(true);
   const [eidtId, setEditId] = useState('');
   const [list, setList] = useState([]);
@@ -112,6 +113,16 @@ function Note(props) {
     setEditId(id);
   }
 
+  function changeSort(s) {
+    if (csRef?.current) {
+      csRef.current.showModal(s);
+    }
+  }
+
+  function goWebSite(s) {
+    window.open(`/note/${s._id}/${s.title}`);
+  }
+
   useEffect(() => {
     dispatch({
       type: 'noteModel/queryNotes',
@@ -132,6 +143,14 @@ function Note(props) {
           <EditOutlined />
           编辑
         </div>
+        <div onClick={() => changeSort(s)} className="toopTitleItem">
+          <EditOutlined />
+          修改排序
+        </div>
+        <div onClick={() => goWebSite(s)} className="toopTitleItem">
+          <EditOutlined />
+          专注模式
+        </div>
         <div
           onClick={() => {
             removeNote(s);
@@ -146,53 +165,72 @@ function Note(props) {
   }
 
   return (
-    <Spin spinning={loading}>
-      <div className={styles.menuComponent}>
-        <div className={classnames(styles.menuItem, styles.absoluteItem)}>
-          <div
-            onClick={() => {
-              addNote();
-            }}
-            className={styles.menuTitle}
-          >
-            <PlusOutlined style={{ margin: '0 5px' }} />
-            新增笔记
+    <>
+      <Spin spinning={loading}>
+        <div className={styles.menuComponent}>
+          <div className={classnames(styles.menuItem, styles.absoluteItem)}>
+            <div
+              onClick={() => {
+                addNote();
+              }}
+              className={styles.menuTitle}
+            >
+              <PlusOutlined style={{ margin: '0 5px' }} />
+              新增笔记
+            </div>
           </div>
+          {list.map(s => (
+            <div
+              key={s._id}
+              className={classnames(styles.menuItem, {
+                [styles.current]: s._id === currentNote._id,
+              })}
+              title={`[${s.sort}]${s.title}`}
+            >
+              {eidtId === s._id ? (
+                <div className={styles.menuTitle}>
+                  <Input
+                    defaultValue={s.title}
+                    autoFocus
+                    onBlur={() => handleBlur()}
+                    onPressEnter={e => saveNote(e, s)}
+                  />
+                </div>
+              ) : (
+                <div
+                  className={styles.menuTitle}
+                  onClick={() => handleClick(s)}
+                  onDoubleClick={() => hanldDbClick(s._id)}
+                >
+                  <BookOutlined style={{ margin: '0 5px' }} />
+                  {s.title}
+                </div>
+              )}
+              <Tooltip placement="right" title={renderTitle(s)}>
+                <MoreOutlined className={styles.menuIcon} />
+              </Tooltip>
+            </div>
+          ))}
         </div>
-        {list.map(s => (
-          <div
-            key={s._id}
-            className={classnames(styles.menuItem, {
-              [styles.current]: s._id === currentNote._id,
-            })}
-            title={s.title}
-          >
-            {eidtId === s._id ? (
-              <div className={styles.menuTitle}>
-                <Input
-                  defaultValue={s.title}
-                  autoFocus
-                  onBlur={() => handleBlur()}
-                  onPressEnter={e => saveNote(e, s)}
-                />
-              </div>
-            ) : (
-              <div
-                className={styles.menuTitle}
-                onClick={() => handleClick(s)}
-                onDoubleClick={() => hanldDbClick(s._id)}
-              >
-                <BookOutlined style={{ margin: '0 5px' }} />
-                {s.title}
-              </div>
-            )}
-            <Tooltip placement="right" title={renderTitle(s)}>
-              <MoreOutlined className={styles.menuIcon} />
-            </Tooltip>
-          </div>
-        ))}
-      </div>
-    </Spin>
+      </Spin>
+      <ChangeSort
+        ref={csRef}
+        onSave={values => {
+          dispatch({
+            type: 'noteModel/saveNote',
+            payload: {
+              ...values,
+              success: () => {
+                message.success('保存成功！');
+                dispatch({
+                  type: 'noteModel/queryNotes',
+                });
+              },
+            },
+          });
+        }}
+      />
+    </>
   );
 }
 
