@@ -12,8 +12,6 @@ function NoteSite(props) {
     },
   } = props;
 
-  console.log('props', props);
-
   return (
     <div className={styles.body}>
       <RenderNote noteId={id} title={title} />
