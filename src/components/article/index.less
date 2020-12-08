@@ -79,7 +79,7 @@
 
 .dirFixed {
   position: fixed;
-  top: 50vh;
+  top: 20vh;
   transform: translateY(-50%);
   right: 10px;
   // border: 1px solid #e5e5e5;
@@ -95,6 +95,14 @@
     padding: 2px 5px;
     cursor: pointer;
     color: #24292e;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    font-size: 12px;
+    &.active{
+      color: #1890ff;
+      border-left: 1px solid #1890ff;
+    }
     &:hover {
       color: #1890ff;
     }
