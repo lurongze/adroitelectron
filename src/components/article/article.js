@@ -6,7 +6,7 @@ import { isFuncAndRun, isEmpty } from '@/utils/helper';
 import ReactMarkdown from 'react-markdown';
 import gfm from 'remark-gfm';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { atomDark as theme } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { base16AteliersulphurpoolLight as theme } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { EditOutlined, LoadingOutlined } from '@ant-design/icons';
 import Dir from '@/components/article/dir';
 import 'github-markdown-css/github-markdown.css';
