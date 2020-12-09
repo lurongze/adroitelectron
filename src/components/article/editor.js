@@ -24,6 +24,7 @@ import {
   SaveOutlined,
 } from '@ant-design/icons';
 import { isFuncAndRun, isEmpty } from '@/utils/helper';
+import { mdToHtml } from '@/utils/markdownit';
 import Editor from '@monaco-editor/react';
 import Picture from './picture';
 import styles from './index.less';
@@ -43,11 +44,14 @@ function EditorItem(props) {
   const [language, setLanguage] = useState(languageList[0]);
 
   function saveArticle() {
+    const content = editorRef.current() || '';
+    console.log('content')
+    mdToHtml(content);
     dispatch({
       type: 'articleModel/saveArticleContent',
       payload: {
         articleId: currentArticle._id,
-        content: editorRef.current() || '',
+        content,
         success() {
           message.info('保存成功！');
           isFuncAndRun(onSaveSuccess);
