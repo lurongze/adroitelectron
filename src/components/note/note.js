@@ -33,6 +33,7 @@ function Note(props) {
       type: 'global/selectNote',
       payload: data,
     });
+    localStorage.setItem('currentNote', JSON.stringify(data));
     setShowNotes(false);
   }
 
@@ -132,7 +133,17 @@ function Note(props) {
   useEffect(() => {
     if (notes.length) {
       setList(notes);
-      selectNote(notes[0]);
+      const getStr = localStorage.getItem('currentNote') || '';
+      if (isEmpty(getStr)) { // 没有，就是第一个
+        selectNote(notes[0]);
+      } else {
+        try {
+          const data = JSON.parse(getStr); // 解析成功
+          selectNote(data);
+        } catch (error) { // 解析错误
+          selectNote(notes[0]);
+        }
+      }
     }
   }, [notes]);
 

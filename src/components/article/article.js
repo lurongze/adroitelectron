@@ -62,7 +62,7 @@ function Article(props) {
               plugins={[gfm]}
               children={articleContent?.content || ''}
             />
-            <Dir content={articleContent?.content || ''} />
+            <Dir dirList={articleContent?.dirList || []} />
           </>
         )}
         {loading && (

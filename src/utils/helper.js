@@ -47,6 +47,19 @@ export function createPictureUrl(file) {
   return `${dayjs().format('YYYYMMDDHHmmss')}.${ext}`;
 }
 
+export function calHeadLevel(str) {
+  const tmpArr = str.split('');
+  const len = tmpArr.length;
+  let res = 0;
+  for (let i = 0; i < len; i++) {
+    if (tmpArr[i] !== '#') {
+      res = i;
+      break;
+    }
+  }
+  return res;
+}
+
 export function getTreeList() {
   const list = [
     { id: 1, title: 'html5', parentId: 0 },

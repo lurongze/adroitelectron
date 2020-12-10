@@ -9,24 +9,24 @@ export function mdToHtml(mdData){
       if (lang && hljs.getLanguage(lang)) {
         try {
           return hljs.highlight(lang, str).value;
-        } catch (__) {}
+        } catch (__) {
+          return "";
+        }
       }
   
       return ""; // 使用额外的默认转义
     },
   });
   
-  let arr = [];
+  let dirList = [];
   
   md.renderer.rules.heading_open = function (tokens, idx, options, env, self) {
     const token = tokens[idx];
     const title = tokens[idx + 1];
-    arr.push(`${token.markup}${title.content}`);
+    dirList.push(`${token.markup}${title.content}`);
     return `<${token.tag} id='${title.content}'>`;
   };
   
   const html = md.render(mdData);
-  console.log("arr", arr);
-  console.log("html", html);
-  return {html, arr};
+  return {html, dirList};
 }

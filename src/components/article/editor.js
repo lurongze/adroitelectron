@@ -45,11 +45,12 @@ function EditorItem(props) {
 
   function saveArticle() {
     const content = editorRef.current() || '';
-    console.log('content')
-    mdToHtml(content);
+    // console.log('content')
+    const parseResult = mdToHtml(content);
     dispatch({
       type: 'articleModel/saveArticleContent',
       payload: {
+        ...parseResult,
         articleId: currentArticle._id,
         content,
         success() {

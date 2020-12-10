@@ -286,12 +286,14 @@ class cloudFunc {
   }
 
   updateArticleContent(values) {
-    const { articleId, content } = values;
+    const { articleId, content, html, dirList } = values;
     return db
       .collection('articleContent')
       .where({ articleId })
       .update({
         content,
+        // html, // 这个先不保存吧，太大了
+        dirList,
         updateTime: new Date(),
       });
   }
