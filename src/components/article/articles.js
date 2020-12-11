@@ -134,6 +134,14 @@ function Articles(props) {
           cateId: currentCategory._id,
         },
       });
+    }else{
+      dispatch({
+        type: 'articleModel/save',
+        payload: {
+          articles: [],
+          articleContent: ''
+        },
+      });
     }
   }, [currentCategory]);
 

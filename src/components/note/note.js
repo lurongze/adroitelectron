@@ -35,7 +35,7 @@ function Note(props) {
     });
     dispatch({
       type: 'articleModel/save',
-      payload: { articles: [] },
+      payload: { articles: [], articleCotent: '' },
     });
     localStorage.setItem('currentNote', JSON.stringify(data));
     setShowNotes(false);
