@@ -40,7 +40,6 @@ function Picture(props) {
               .then(res1 => {
                 if (res1?.url && res1?.fileID) {
                   cloudFunc.savePicture(res1).then(res2 => {
-                    // console.log('getPictureURL', res2);
                     message.success('上传成功！');
                     setLoading(false);
                     setList([{ url: res1.url }, ...list]);

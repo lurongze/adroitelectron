@@ -1,16 +1,5 @@
 import cloudbase from '@cloudbase/js-sdk';
 import { isFuncAndRun, array2Tree } from '@/utils/helper';
-// const app = cloudbase.init({
-//   env: 'wt-share-43bafa',
-// });
-// const auth = app.auth();
-// const db = app.database();
-// async function login() {
-//   await auth.anonymousAuthProvider().signIn();
-//   // 匿名登录成功检测登录状态isAnonymous字段为true
-//   const loginState = await auth.getLoginState();
-//   console.log('loginState.isAnonymousAuth', loginState.isAnonymousAuth); // true
-// }
 
 function getQueryString(name) {
   var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
@@ -35,8 +24,6 @@ class cloudFunc {
     });
     // 初始化数据库
     db = app.database();
-    // console.log('constructor', app, db)
-    // this.signIn();
     auth = app.auth({
       persistence: 'local',
     });
@@ -44,7 +31,6 @@ class cloudFunc {
 
   async isLogin() {
     const loginState = await auth.getLoginState();
-    console.log('loginState', loginState);
   }
 
   // 注册邮箱
@@ -120,7 +106,6 @@ class cloudFunc {
     });
     // .then(res => {
     //   // 返回文件 ID
-    //   console.log(res.fileID);
     // });
   }
 
@@ -311,7 +296,6 @@ class cloudFunc {
       .orderBy('sort', 'asc')
       .limit(1000)
       .get();
-    // console.log('noteData', [...categorys, ...articles]);
     Promise.all([categoryPromise, articlesPromise]).then(res => {
       const cateList = res[0]?.data || [];
       const atList = (res[1]?.data || []).map(s => ({
@@ -319,7 +303,6 @@ class cloudFunc {
         parentId: s.cateId,
       }));
       const resList = array2Tree([...cateList, ...atList], '');
-      console.log('noteData', [...cateList, ...atList]);
       isFuncAndRun(cb, resList);
     });
   }

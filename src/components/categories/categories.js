@@ -117,7 +117,7 @@ function Categories(props) {
   }
 
   function removeCategory(s) {
-    const { id, children = [] } = s;
+    const { _id, children = [] } = s;
     if (children.length) {
       message.error('分类下还有子分类，无法删除');
     } else {
@@ -129,7 +129,7 @@ function Categories(props) {
           dispatch({
             type: 'categoriesModel/deleteCategory',
             payload: {
-              id,
+              id: _id,
               success: () => {
                 message.success('删除成功！');
                 dispatch({

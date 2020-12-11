@@ -33,6 +33,10 @@ function Note(props) {
       type: 'global/selectNote',
       payload: data,
     });
+    dispatch({
+      type: 'articleModel/save',
+      payload: { articles: [] },
+    });
     localStorage.setItem('currentNote', JSON.stringify(data));
     setShowNotes(false);
   }
@@ -134,13 +138,15 @@ function Note(props) {
     if (notes.length) {
       setList(notes);
       const getStr = localStorage.getItem('currentNote') || '';
-      if (isEmpty(getStr)) { // 没有，就是第一个
+      if (isEmpty(getStr)) {
+        // 没有，就是第一个
         selectNote(notes[0]);
       } else {
         try {
           const data = JSON.parse(getStr); // 解析成功
           selectNote(data);
-        } catch (error) { // 解析错误
+        } catch (error) {
+          // 解析错误
           selectNote(notes[0]);
         }
       }

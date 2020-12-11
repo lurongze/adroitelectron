@@ -31,7 +31,6 @@ function Login(props) {
   };
 
   function onLogin(values) {
-    console.log('onLogin', values);
     setLoading(true);
     cloudFunc.signInWithEmailAndPassword(
       values.email,

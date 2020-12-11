@@ -45,7 +45,6 @@ function EditorItem(props) {
 
   function saveArticle() {
     const content = editorRef.current() || '';
-    // console.log('content')
     const parseResult = mdToHtml(content);
     dispatch({
       type: 'articleModel/saveArticleContent',
