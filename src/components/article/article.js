@@ -59,6 +59,7 @@ function Article(props) {
               className="markdown-body"
               allowDangerousHtml
               renderers={renderers}
+              linkTarget="_blank"
               plugins={[gfm]}
               children={articleContent?.content || ''}
             />
