@@ -31,6 +31,9 @@ function EditorItem(props) {
 
   function saveArticle(runCallback = true) {
     const content = editorRef.current() || '';
+    if(isEmpty(content)){
+      return null;
+    }
     const parseResult = mdToHtml(content);
     dispatch({
       type: 'articleModel/saveArticleContent',
