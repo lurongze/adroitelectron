@@ -55,21 +55,12 @@ function EditorItem(props) {
     });
   }
 
-  const autoSave = debounce(() => {
-    saveArticle(false);
-  }, 15 * 1000);
-
   useEffect(() => {
     if (!isEmpty(currentArticle?._id)) {
       getContent(currentArticle._id);
     }
   }, [currentArticle]);
 
-  useEffect(() => {
-    return () => {
-      autoSave.cancel();
-    };
-  }, []);
 
   // const menu = (
   //   <Menu>
@@ -96,7 +87,6 @@ function EditorItem(props) {
               kd.preventDefault();
               saveArticle(false);
             }
-            autoSave();
           });
           editorRef.current = e;
         }}

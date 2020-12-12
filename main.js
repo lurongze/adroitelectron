@@ -82,7 +82,8 @@ function createWindow () {
   // and load the index.html of the app.
   // mainWindow.loadFile('index.html')
   if (process.env.NODE_ENV === 'production') {
-    mainWindow.loadURL(path.normalize(`file://${__dirname}/dist/index.html`));
+    // mainWindow.loadURL(path.normalize(`file://${__dirname}/dist/index.html`));
+    mainWindow.loadURL('https://adroit-book-1253286615.cos-website.ap-guangzhou.myqcloud.com');
   } else {
     // Open the DevTools.
     mainWindow.webContents.openDevTools();

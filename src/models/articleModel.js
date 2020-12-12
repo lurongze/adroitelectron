@@ -63,11 +63,14 @@ const ArticleModel = {
       });
     },
     *saveArticleContent({ payload }, { call, put }) {
-      const res = yield call(cloudFunc.updateArticleContent, payload);
-      if ((res?.updated && +res.updated !== 0) || !isEmpty(res?.id)) {
-        isFuncAndRun(payload?.success);
-      } else {
-        message.error('保存失败！');
+      const { content } = payload;
+      if (!isEmpty(content)) {
+        const res = yield call(cloudFunc.updateArticleContent, payload);
+        if ((res?.updated && +res.updated !== 0) || !isEmpty(res?.id)) {
+          isFuncAndRun(payload?.success);
+        } else {
+          message.error('保存失败！');
+        }
       }
     },
   },
