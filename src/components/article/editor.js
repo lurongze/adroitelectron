@@ -1,21 +1,5 @@
-import React, {
-  cloneElement,
-  ReactElement,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
-import {
-  Input,
-  Menu,
-  Form,
-  message,
-  Button,
-  Tree,
-  Cascader,
-  Dropdown,
-  Select,
-} from 'antd';
+import React, { useEffect, useRef, useState } from 'react';
+import { message, Button } from 'antd';
 import { connect } from 'umi';
 import classnames from 'classnames';
 import {
@@ -23,6 +7,7 @@ import {
   PictureOutlined,
   SaveOutlined,
 } from '@ant-design/icons';
+import { debounce } from 'lodash';
 import { isFuncAndRun, isEmpty } from '@/utils/helper';
 import { mdToHtml } from '@/utils/markdownit';
 import Editor from '@monaco-editor/react';
@@ -37,13 +22,14 @@ function EditorItem(props) {
     articleModel: { articleContent = {} },
     dispatch,
     loading,
+    submiting,
     onSaveSuccess,
   } = props;
   const editorRef = useRef();
   const [isEditorReady, setIsEditorReady] = useState(false);
   // const [language, setLanguage] = useState(languageList[0]);
 
-  function saveArticle(runCallback=true) {
+  function saveArticle(runCallback = true) {
     const content = editorRef.current() || '';
     const parseResult = mdToHtml(content);
     dispatch({
@@ -54,7 +40,7 @@ function EditorItem(props) {
         content,
         success() {
           message.info('保存成功！');
-          if(runCallback){
+          if (runCallback) {
             isFuncAndRun(onSaveSuccess);
           }
         },
@@ -69,11 +55,21 @@ function EditorItem(props) {
     });
   }
 
+  const autoSave = debounce(() => {
+    saveArticle(false);
+  }, 15 * 1000);
+
   useEffect(() => {
     if (!isEmpty(currentArticle?._id)) {
       getContent(currentArticle._id);
     }
   }, [currentArticle]);
+
+  useEffect(() => {
+    return () => {
+      autoSave.cancel();
+    };
+  }, []);
 
   // const menu = (
   //   <Menu>
@@ -86,27 +82,28 @@ function EditorItem(props) {
   // );
 
   return (
-    <div className={classnames(styles.editorContainer)} >
+    <div className={classnames(styles.editorContainer)}>
       <Editor
         height="calc(100vh - 50px)"
-        language='markdown'
+        language="markdown"
         className={styles.editorItem}
         value={articleContent?.content || ''}
         editorDidMount={(e, ed) => {
           setIsEditorReady(true);
-          ed.onKeyDown((kd)=>{
+          ed.onKeyDown(kd => {
             // ctrl+s 保存内容
-            if(kd?.ctrlKey&&kd.keyCode===49){
+            if (kd?.ctrlKey && kd.keyCode === 49) {
               kd.preventDefault();
               saveArticle(false);
             }
-          })
+            autoSave();
+          });
           editorRef.current = e;
         }}
       />
       <div className={styles.footer}>
         <Button
-          loading={loading}
+          loading={submiting}
           disabled={!isEditorReady}
           className={styles.buttons}
           type="primary"
@@ -157,4 +154,5 @@ export default connect(({ global, articleModel, loading }) => ({
   global,
   articleModel,
   loading: loading.effects['articleModel/getArticleContent'],
+  submiting: loading.effects['articleModel/saveArticleContent'],
 }))(EditorItem);
