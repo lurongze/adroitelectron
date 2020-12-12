@@ -29,7 +29,7 @@ import Editor from '@monaco-editor/react';
 import Picture from './picture';
 import styles from './index.less';
 
-const languageList = ['markdown', 'javascript'];
+// const languageList = ['markdown', 'javascript'];
 
 function EditorItem(props) {
   const {
@@ -41,9 +41,9 @@ function EditorItem(props) {
   } = props;
   const editorRef = useRef();
   const [isEditorReady, setIsEditorReady] = useState(false);
-  const [language, setLanguage] = useState(languageList[0]);
+  // const [language, setLanguage] = useState(languageList[0]);
 
-  function saveArticle() {
+  function saveArticle(runCallback=true) {
     const content = editorRef.current() || '';
     const parseResult = mdToHtml(content);
     dispatch({
@@ -54,7 +54,9 @@ function EditorItem(props) {
         content,
         success() {
           message.info('保存成功！');
-          isFuncAndRun(onSaveSuccess);
+          if(runCallback){
+            isFuncAndRun(onSaveSuccess);
+          }
         },
       },
     });
@@ -73,25 +75,32 @@ function EditorItem(props) {
     }
   }, [currentArticle]);
 
-  const menu = (
-    <Menu>
-      {languageList.map(s => (
-        <Menu.Item key={s} onClick={() => setLanguage(s)}>
-          {s}
-        </Menu.Item>
-      ))}
-    </Menu>
-  );
+  // const menu = (
+  //   <Menu>
+  //     {languageList.map(s => (
+  //       <Menu.Item key={s} onClick={() => setLanguage(s)}>
+  //         {s}
+  //       </Menu.Item>
+  //     ))}
+  //   </Menu>
+  // );
 
   return (
-    <div className={classnames(styles.editorContainer)}>
+    <div className={classnames(styles.editorContainer)} >
       <Editor
         height="calc(100vh - 50px)"
-        language={language}
+        language='markdown'
         className={styles.editorItem}
         value={articleContent?.content || ''}
-        editorDidMount={e => {
+        editorDidMount={(e, ed) => {
           setIsEditorReady(true);
+          ed.onKeyDown((kd)=>{
+            // ctrl+s 保存内容
+            if(kd?.ctrlKey&&kd.keyCode===49){
+              kd.preventDefault();
+              saveArticle(false);
+            }
+          })
           editorRef.current = e;
         }}
       />
@@ -112,7 +121,10 @@ function EditorItem(props) {
           disabled={!isEditorReady}
           className={styles.buttons}
           type="primary"
-          onClick={() => isFuncAndRun(onSaveSuccess)}
+          onClick={() => {
+            saveArticle();
+            isFuncAndRun(onSaveSuccess);
+          }}
         >
           <FundViewOutlined />
           查看文章
@@ -128,14 +140,14 @@ function EditorItem(props) {
             图片上传
           </Button>
         </Picture>
-        <Dropdown.Button
+        {/* <Dropdown.Button
           className={styles.buttons}
           trigger={['click']}
           overlay={menu}
           disabled={!isEditorReady}
         >
           当前语言：{language}
-        </Dropdown.Button>
+        </Dropdown.Button> */}
       </div>
     </div>
   );
