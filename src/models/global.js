@@ -19,28 +19,18 @@ const GlobalModel = {
       };
     },
     selectNote(state, action) {
-      let resState = {
+      return {
         ...state,
         currentNote: action.payload,
+        currentCategory: {},
+        currentArticle: {},
       };
-      // 如果笔记变了，分类和文章都清空一下
-      if (
-        state.currentNote?._id &&
-        action.payload?._id &&
-        state.currentNote._id !== action.payload._id
-      ) {
-        resState = {
-          ...resState,
-          currentCategory: {},
-          currentArticle: {},
-        };
-      }
-      return resState;
     },
     selectCategory(state, action) {
       return {
         ...state,
         currentCategory: action.payload,
+        currentArticle: {},
       };
     },
     selectArticle(state, action) {

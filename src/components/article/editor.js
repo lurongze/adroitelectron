@@ -21,7 +21,6 @@ function EditorItem(props) {
     global: { currentArticle = {} },
     articleModel: { articleContent = {} },
     dispatch,
-    loading,
     submiting,
     onSaveSuccess,
   } = props;
@@ -106,7 +105,7 @@ function EditorItem(props) {
           保存
         </Button>
 
-        <Button
+        {/* <Button
           loading={loading}
           disabled={!isEditorReady}
           className={styles.buttons}
@@ -118,7 +117,7 @@ function EditorItem(props) {
         >
           <FundViewOutlined />
           查看文章
-        </Button>
+        </Button> */}
 
         <Picture>
           <Button
