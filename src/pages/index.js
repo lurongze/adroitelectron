@@ -8,6 +8,7 @@ import Articles from '@/components/article/articles';
 import ArticleArea from '@/components/article/articleArea';
 import { connect } from 'umi';
 import cloudFunc from '@/utils/cloudFunc';
+import fetch from '@/utils/request';
 import Login from './login';
 import styles from './index.less';
 
@@ -23,10 +24,19 @@ function Index(props) {
     if (cloudFunc.checkHasLogin()) {
       setIsLogin(true);
     }
+    getMd();
   }, []);
   useEffect(() => {
     setShowNotes(false);
   }, [currentNote]);
+
+  function getMd() {
+    fetch(
+      'https://adroit-book-1253286615.cos.ap-guangzhou.myqcloud.com/markdownData/build-tools/gulp.md',
+    ).then(res => {
+      console.log('res', res);
+    });
+  }
 
   return initing ? (
     <Empty description="页面初始化中..." image={Empty.PRESENTED_IMAGE_SIMPLE} />
